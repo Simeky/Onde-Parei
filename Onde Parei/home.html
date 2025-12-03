@@ -86,13 +86,12 @@
                     <h5 class="modal-title">Alterar Senha</h5>
                 </div>
                 <div class="modal-body">
-                    <input type="password" class="form-control mb-2" placeholder="Nova Senha">
-                    <input type="password" class="form-control" placeholder="Confirmar Senha">
+                    <input id="newPass" type="password" class="form-control mb-2" placeholder="Nova Senha">
+                    <input id="confirmPass" type="password" class="form-control" placeholder="Confirmar Senha">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#configModal">Cancelar</button>
-                    <button class="btn btn-primary btn-sm" onclick="alert('Senha alterada!')">Confirmar</button>
+                    <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary btn-sm" id="changePassConfirm">Confirmar</button>
                 </div>
             </div>
         </div>

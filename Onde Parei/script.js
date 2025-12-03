@@ -280,3 +280,41 @@ function removeBookFromMyBooks() {
     loadMyBooks();
     bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
 }
+
+// --- ALTERAR SENHA ---
+function changePassword() {
+    const newPassEl = document.getElementById('newPass');
+    const confirmPassEl = document.getElementById('confirmPass');
+    if(!newPassEl || !confirmPassEl) return;
+
+    const newPass = newPassEl.value.trim();
+    const conf = confirmPassEl.value.trim();
+
+    if (!newPass || !conf) return alert('Preencha ambos os campos.');
+    if (newPass !== conf) return alert('As senhas não coincidem.');
+
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return alert('Nenhum usuário logado.');
+
+    user.senha = newPass;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const idx = users.findIndex(u => u.email === user.email);
+    if (idx > -1) {
+        users[idx].senha = newPass;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    alert('Senha alterada com sucesso!');
+    const modalEl = document.getElementById('changePassModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    modalInstance.hide();
+    newPassEl.value = '';
+    confirmPassEl.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('changePassConfirm');
+    if (btn) btn.addEventListener('click', changePassword);
+});
