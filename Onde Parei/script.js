@@ -265,3 +265,18 @@ function saveBookDetails() {
         bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
     }
 }
+
+function removeBookFromMyBooks() {
+    if(!confirm('Remover este livro da sua lista?')) return;
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const users = JSON.parse(localStorage.getItem('users'));
+    user.books = user.books.filter(b => b.id !== currentEditingBookId);
+    
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    const dbIndex = users.findIndex(u => u.email === user.email);
+    users[dbIndex] = user;
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    loadMyBooks();
+    bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
+}
