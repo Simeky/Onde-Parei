@@ -241,6 +241,13 @@ function openBookModal(book) {
     document.getElementById('editPage').value = storedBook.currentPage || 0;
     document.getElementById('editNotes').value = storedBook.notes || '';
 
+    // Limita o campo de página ao máximo de páginas do livro
+    const editPageInput = document.getElementById('editPage');
+    const maxPages = storedBook.pages || 0;
+    editPageInput.min = 0;
+    editPageInput.max = maxPages;
+    editPageInput.title = `Minimo: 0, Máximo: ${maxPages}`;
+
     const modal = new bootstrap.Modal(document.getElementById('bookDetailModal'));
     modal.show();
 }
@@ -251,8 +258,20 @@ function saveBookDetails() {
     
     const bookIndex = user.books.findIndex(b => b.id === currentEditingBookId);
     if (bookIndex > -1) {
+        const editPageInput = document.getElementById('editPage');
+        const currentPage = parseInt(editPageInput.value) || 0;
+        const maxPages = parseInt(editPageInput.max) || 0;
+        
+        // Validar se a página está dentro do limite
+        if (currentPage < 0) {
+            return alert('A página atual não pode ser menor que 0!');
+        }
+        if (currentPage > maxPages) {
+            return alert(`A página não pode ser maior que ${maxPages}!`);
+        }
+        
         user.books[bookIndex].status = document.getElementById('editStatus').value;
-        user.books[bookIndex].currentPage = document.getElementById('editPage').value;
+        user.books[bookIndex].currentPage = currentPage;
         user.books[bookIndex].notes = document.getElementById('editNotes').value;
 
         
