@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHeaderUser();
     
     const path = window.location.pathname;
-    const isPublic = path.includes('index.html') || path.includes('login.html') || path.includes('register.html');
+    const isPublic = path.includes('index.html') || path.includes('login.html') || path.includes('cadastro.html') || path.includes('sobre.html') || path.includes('register.html');
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
     if (!isPublic && !user) {
