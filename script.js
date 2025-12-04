@@ -107,7 +107,7 @@ async function registerUser() {
             headers: { 'X-Api-Key': API_NINJAS_KEY }
         });
         const data = await response.json();
-        if (!data.valid) return alert('Email inválido!');
+        if (!data.is_valid) return alert('Email inválido!');
     } catch (error) {
         console.warn('Erro API Ninjas, prosseguindo...');
     }
@@ -140,12 +140,67 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-function deleteAccount() {
-    if(!confirm('Tem certeza? Essa ação é irreversível.')) return;
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+function openDeleteModal() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return;
+
+    const configModalEl = document.getElementById('configModal');
+    const configModal = bootstrap.Modal.getInstance(configModalEl);
+    if (configModal) configModal.hide();
+
+    const passGroup = document.getElementById('deletePassGroup');
+    const emailGroup = document.getElementById('deleteEmailGroup');
+    const emailLabel = document.getElementById('deleteEmailLabel');
+    
+    document.getElementById('deletePassInput').value = '';
+    document.getElementById('deleteEmailInput').value = '';
+
+    if (user.isGoogle) {
+        if(passGroup) passGroup.style.display = 'none';
+        if(emailGroup) {
+            emailGroup.style.display = 'block';
+            emailLabel.innerHTML = `Para segurança, digite <strong>${user.email}</strong> abaixo:`;
+        }
+    } else {
+        if(passGroup) passGroup.style.display = 'block';
+        if(emailGroup) emailGroup.style.display = 'none';
+    }
+
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+    deleteModal.show();
+}
+
+function confirmDeleteAccount() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    
+    const passInput = document.getElementById('deletePassInput').value;
+    const emailInput = document.getElementById('deleteEmailInput').value;
+    
+    if (user.isGoogle) {
+        if (emailInput.trim() !== user.email) {
+            alert(`O email digitado não confere!\nPor favor, digite exatamente: ${user.email}`);
+            return;
+        }
+    } else {
+        if (!passInput) {
+            alert("Por favor, digite sua senha para confirmar.");
+            return;
+        }
+        if (passInput !== user.senha) {
+            alert("Senha incorreta! Não foi possível excluir a conta.");
+            return;
+        }
+    }
+    
     let users = JSON.parse(localStorage.getItem('users')) || [];
-    users = users.filter(u => u.email !== currentUser.email);
+    users = users.filter(u => u.email !== user.email);
     localStorage.setItem('users', JSON.stringify(users));
+
+    const modalEl = document.getElementById('deleteAccountModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if(modal) modal.hide();
+
+    alert("Conta excluída com sucesso.");
     logout();
 }
 
