@@ -107,6 +107,7 @@ async function registerUser() {
             headers: { 'X-Api-Key': API_NINJAS_KEY }
         });
         const data = await response.json();
+        if (!data.valid) return alert('Email inválido!');
     } catch (error) {
         console.warn('Erro API Ninjas, prosseguindo...');
     }
