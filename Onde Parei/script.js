@@ -1,17 +1,25 @@
 const API_NINJAS_KEY = 'qCe2H4YOn1LpGcK3uBd8Mw==DSDfKXW0uo5SWhzP';
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';
+const ITEMS_PER_PAGE = 8; 
+
+let currentSearchQuery = '';
+let currentSearchIndex = 0; // Para o Google API 
+let currentMyBooksPage = 1; // Para Meus Livros 
 
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
     updateHeaderUser();
     
     const path = window.location.pathname;
-    const isPublic = path.includes('index.html') || path.includes('login.html') || path.includes('cadastro.html') || path.includes('sobre.html') || path.includes('register.html');
+    const isPublic = path.includes('index.html') || path.includes('login.html') || path.includes('cadastro.html') || path.includes('sobre.html');
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
     if (!isPublic && !user) {
         window.location.href = 'index.html';
     }
+
+    const btnPass = document.getElementById('changePassConfirm');
+    if (btnPass) btnPass.addEventListener('click', changePassword);
 });
 
 function applyTheme() {
@@ -28,8 +36,7 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-bs-theme', newTheme);
 }
 
-
-// --- AUTENTICAÇÃO E CADASTRO ---
+// --- AUTENTICAÇÃO ---
 async function registerUser() {
     const nome = document.getElementById('regNome').value;
     const email = document.getElementById('regEmail').value;
@@ -38,19 +45,15 @@ async function registerUser() {
 
     if (senha !== confSenha) return alert('As senhas não coincidem!');
 
-    // Validação de Email via API Ninjas
     try {
         const response = await fetch(`https://api.api-ninjas.com/v1/validateemail?email=${email}`, {
             headers: { 'X-Api-Key': API_NINJAS_KEY }
         });
         const data = await response.json();
-        
         if (!data.is_valid) {
-             alert('Email inválido segundo a API Ninjas (Verifique se inseriu a Key no script.js ou use um email real).');
-             // return;
         }
     } catch (error) {
-        console.warn('Erro na validação de email (provavelmente sem chave API), prosseguindo...');
+        console.warn('Erro API Ninjas, prosseguindo...');
     }
 
     const users = JSON.parse(localStorage.getItem('users')) || [];
@@ -63,9 +66,8 @@ async function registerUser() {
 }
 
 function loginUser() {
-    const loginInput = document.getElementById('loginUser').value; // Pode ser nome ou email
+    const loginInput = document.getElementById('loginUser').value;
     const senhaInput = document.getElementById('loginSenha').value;
-
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const user = users.find(u => (u.email === loginInput || u.nome === loginInput) && u.senha === senhaInput);
 
@@ -84,16 +86,14 @@ function logout() {
 
 function deleteAccount() {
     if(!confirm('Tem certeza? Essa ação é irreversível.')) return;
-    
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     let users = JSON.parse(localStorage.getItem('users')) || [];
     users = users.filter(u => u.email !== currentUser.email);
-    
     localStorage.setItem('users', JSON.stringify(users));
     logout();
 }
 
-// --- CONFIGURAÇÕES E MODAIS ---
+// --- UTILITÁRIOS ---
 function updateHeaderUser() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user) {
@@ -109,43 +109,170 @@ function togglePassword(fieldId) {
     input.type = input.type === 'password' ? 'text' : 'password';
 }
 
-// --- LIVROS E API GOOGLE ---
-async function searchBooks() {
+function initSearch() {
     const query = document.getElementById('searchQuery').value;
     if (!query) return;
+    currentSearchQuery = query;
+    currentSearchIndex = 0; // Reseta para o primeiro resultado
+    searchBooks();
+}
 
+async function searchBooks() {
     const container = document.getElementById('booksContainer');
+    const paginationDiv = document.getElementById('paginationSearch');
+    
     container.innerHTML = '<p class="text-center">Carregando...</p>';
+    paginationDiv.innerHTML = ''; // Limpa paginação enquanto carrega
 
     try {
-        const res = await fetch(`${GOOGLE_BOOKS_API}?q=${query}&maxResults=10`);
+        // Usa currentSearchIndex para controlar a página
+        const res = await fetch(`${GOOGLE_BOOKS_API}?q=${currentSearchQuery}&startIndex=${currentSearchIndex}&maxResults=${ITEMS_PER_PAGE}`);
         const data = await res.json();
         
         container.innerHTML = '';
+
         if (data.items) {
             data.items.forEach(item => {
-                const book = {
-                    id: item.id,
-                    title: item.volumeInfo.title || 'Sem Título',
-                    authors: item.volumeInfo.authors || ['Desconhecido'],
-                    pages: item.volumeInfo.pageCount || 0,
-                    img: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/128x190?text=Sem+Capa',
-                    year: item.volumeInfo.publishedDate || 'N/A',
-                    category: item.volumeInfo.categories?.[0] || 'Geral'
-                };
+                const book = formatGoogleBook(item);
                 container.innerHTML += createBookCard(book, false);
             });
+            renderSearchPagination(data.totalItems);
         } else {
             container.innerHTML = '<p class="text-center">Nenhum livro encontrado.</p>';
         }
     } catch (e) {
+        console.error(e);
         container.innerHTML = '<p class="text-center text-danger">Erro ao buscar livros.</p>';
     }
 }
 
+function formatGoogleBook(item) {
+    return {
+        id: item.id,
+        title: item.volumeInfo.title || 'Sem Título',
+        authors: item.volumeInfo.authors || ['Desconhecido'],
+        pages: item.volumeInfo.pageCount || 0,
+        img: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/128x190?text=Sem+Capa',
+        year: item.volumeInfo.publishedDate || 'N/A',
+        category: item.volumeInfo.categories?.[0] || 'Geral'
+    };
+}
+
+function renderSearchPagination() {
+    const paginationDiv = document.getElementById('paginationSearch');
+    const currentPage = (currentSearchIndex / ITEMS_PER_PAGE) + 1;
+    const prevDisabled = currentSearchIndex === 0 ? 'disabled' : '';
+    
+    let html = `
+        <nav aria-label="Navegação de busca">
+            <ul class="pagination justify-content-center">
+                <li class="page-item ${prevDisabled}">
+                    <button class="page-link" onclick="changeSearchPage(-1)">Anterior</button>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Página ${currentPage}</span>
+                </li>
+                <li class="page-item">
+                    <button class="page-link" onclick="changeSearchPage(1)">Próxima</button>
+                </li>
+            </ul>
+        </nav>
+    `;
+    paginationDiv.innerHTML = html;
+}
+
+function changeSearchPage(direction) {
+    if (direction === 1) {
+        currentSearchIndex += ITEMS_PER_PAGE;
+    } else if (direction === -1 && currentSearchIndex >= ITEMS_PER_PAGE) {
+        currentSearchIndex -= ITEMS_PER_PAGE;
+    }
+    searchBooks();
+}
+
+function loadMyBooks() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const filter = document.getElementById('statusFilter').value;
+    const container = document.getElementById('myBooksContainer');
+    const paginationDiv = document.getElementById('paginationMyBooks');
+    
+    if (!container) return;
+
+    container.innerHTML = '';
+    
+    if (!user.books || user.books.length === 0) {
+        container.innerHTML = '<p class="text-center">Você ainda não adicionou livros.</p>';
+        paginationDiv.innerHTML = '';
+        return;
+    }
+
+    // 1. Filtrar primeiro
+    let filteredBooks = user.books.filter(book => {
+        return filter === 'Todos' || book.status === filter;
+    });
+
+    // 2. Calcular Paginação
+    const totalBooks = filteredBooks.length;
+    const totalPages = Math.ceil(totalBooks / ITEMS_PER_PAGE);
+
+    // Ajuste de segurança se a página atual for maior que o total (ex: deletou livros)
+    if (currentMyBooksPage > totalPages && totalPages > 0) currentMyBooksPage = totalPages;
+    if (totalPages === 0) currentMyBooksPage = 1;
+
+    // 3. Fatiar o Array (Slice) para pegar só os 8 da página atual
+    const start = (currentMyBooksPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    const booksToShow = filteredBooks.slice(start, end);
+
+    // 4. Renderizar Livros
+    if (booksToShow.length > 0) {
+        booksToShow.forEach(book => {
+            container.innerHTML += createBookCard(book, true);
+        });
+        renderMyBooksPagination(totalPages);
+    } else {
+        container.innerHTML = '<p class="text-center">Nenhum livro encontrado com este filtro.</p>';
+        paginationDiv.innerHTML = '';
+    }
+}
+
+function renderMyBooksPagination(totalPages) {
+    const paginationDiv = document.getElementById('paginationMyBooks');
+    if (totalPages <= 1) {
+        paginationDiv.innerHTML = ''; // Não precisa de paginação se tiver só 1 página
+        return;
+    }
+
+    const prevDisabled = currentMyBooksPage === 1 ? 'disabled' : '';
+    const nextDisabled = currentMyBooksPage === totalPages ? 'disabled' : '';
+
+    let html = `
+        <nav aria-label="Navegação meus livros">
+            <ul class="pagination justify-content-center">
+                <li class="page-item ${prevDisabled}">
+                    <button class="page-link" onclick="changeMyBooksPage(-1)">Anterior</button>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Página ${currentMyBooksPage} de ${totalPages}</span>
+                </li>
+                <li class="page-item ${nextDisabled}">
+                    <button class="page-link" onclick="changeMyBooksPage(1)">Próxima</button>
+                </li>
+            </ul>
+        </nav>
+    `;
+    paginationDiv.innerHTML = html;
+}
+
+function changeMyBooksPage(direction) {
+    currentMyBooksPage += direction;
+    loadMyBooks();
+    // Scroll suave para o topo da lista
+    document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth' });
+}
+
 function createBookCard(book, isMyBooks) {
     const bookJson = JSON.stringify(book).replace(/"/g, '&quot;');
-    
     let actionBtn = `<button class="btn btn-primary w-100 mt-2" onclick="addToMyBooks(${bookJson})">Adicionar</button>`;
     let statusBadge = '';
 
@@ -178,11 +305,8 @@ function createBookCard(book, isMyBooks) {
 function addToMyBooks(book) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
-    
-    // Atualiza o usuário atual
     if (!user.books) user.books = [];
     
-    // Evita duplicatas
     if (user.books.find(b => b.id === book.id)) {
         return alert('Livro já está na sua lista!');
     }
@@ -190,45 +314,16 @@ function addToMyBooks(book) {
     book.status = 'Para ler';
     book.currentPage = 0;
     book.notes = '';
-
     user.books.push(book);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-
-    const userIndex = users.findIndex(u => u.email === user.email);
-    users[userIndex] = user;
-    localStorage.setItem('users', JSON.stringify(users));
     
+    saveUser(user, users);
     alert('Livro adicionado aos Meus Livros!');
 }
 
-// --- LÓGICA DA PÁGINA "MEUS LIVROS" ---
-function loadMyBooks() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const filter = document.getElementById('statusFilter').value;
-    const container = document.getElementById('myBooksContainer');
-    
-    if (!container) return; 
-
-    container.innerHTML = '';
-    
-    if (!user.books || user.books.length === 0) {
-        container.innerHTML = '<p class="text-center">Você ainda não adicionou livros.</p>';
-        return;
-    }
-
-    user.books.forEach(book => {
-        if (filter === 'Todos' || book.status === filter) {
-            container.innerHTML += createBookCard(book, true);
-        }
-    });
-}
-
-// Modal de Detalhes do Livro
 let currentEditingBookId = null;
 
 function openBookModal(book) {
     currentEditingBookId = book.id;
-    
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const storedBook = user.books.find(b => b.id === book.id);
 
@@ -241,99 +336,65 @@ function openBookModal(book) {
     document.getElementById('editPage').value = storedBook.currentPage || 0;
     document.getElementById('editNotes').value = storedBook.notes || '';
 
-    // Limita o campo de página ao máximo de páginas do livro
     const editPageInput = document.getElementById('editPage');
-    const maxPages = storedBook.pages || 0;
-    editPageInput.min = 0;
-    editPageInput.max = maxPages;
-    editPageInput.title = `Minimo: 0, Máximo: ${maxPages}`;
+    editPageInput.max = storedBook.pages || 0;
 
-    const modal = new bootstrap.Modal(document.getElementById('bookDetailModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('bookDetailModal')).show();
 }
 
 function saveBookDetails() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
-    
     const bookIndex = user.books.findIndex(b => b.id === currentEditingBookId);
+
     if (bookIndex > -1) {
         const editPageInput = document.getElementById('editPage');
-        const currentPage = parseInt(editPageInput.value) || 0;
-        const maxPages = parseInt(editPageInput.max) || 0;
-        
-        // Validar se a página está dentro do limite
-        if (currentPage < 0) {
-            return alert('A página atual não pode ser menor que 0!');
-        }
-        if (currentPage > maxPages) {
-            return alert(`A página não pode ser maior que ${maxPages}!`);
-        }
+        const val = parseInt(editPageInput.value) || 0;
+        const max = parseInt(editPageInput.max) || 0;
+
+        if (val < 0) return alert('Página inválida!');
+        if (max > 0 && val > max) return alert(`A página não pode ser maior que ${max}!`);
         
         user.books[bookIndex].status = document.getElementById('editStatus').value;
-        user.books[bookIndex].currentPage = currentPage;
+        user.books[bookIndex].currentPage = val;
         user.books[bookIndex].notes = document.getElementById('editNotes').value;
 
-        
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        const dbIndex = users.findIndex(u => u.email === user.email);
-        users[dbIndex] = user;
-        localStorage.setItem('users', JSON.stringify(users));
-        
+        saveUser(user, users);
         loadMyBooks();
         bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
     }
 }
 
 function removeBookFromMyBooks() {
-    if(!confirm('Remover este livro da sua lista?')) return;
+    if(!confirm('Remover este livro?')) return;
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
-    user.books = user.books.filter(b => b.id !== currentEditingBookId);
     
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    const dbIndex = users.findIndex(u => u.email === user.email);
-    users[dbIndex] = user;
-    localStorage.setItem('users', JSON.stringify(users));
+    user.books = user.books.filter(b => b.id !== currentEditingBookId);
+    saveUser(user, users);
     
     loadMyBooks();
     bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
 }
 
-// --- ALTERAR SENHA ---
-function changePassword() {
-    const newPassEl = document.getElementById('newPass');
-    const confirmPassEl = document.getElementById('confirmPass');
-    if(!newPassEl || !confirmPassEl) return;
-
-    const newPass = newPassEl.value.trim();
-    const conf = confirmPassEl.value.trim();
-
-    if (!newPass || !conf) return alert('Preencha ambos os campos.');
-    if (newPass !== conf) return alert('As senhas não coincidem.');
-
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) return alert('Nenhum usuário logado.');
-
-    user.senha = newPass;
+function saveUser(user, users) {
     localStorage.setItem('currentUser', JSON.stringify(user));
-
-    const users = JSON.parse(localStorage.getItem('users')) || [];
     const idx = users.findIndex(u => u.email === user.email);
-    if (idx > -1) {
-        users[idx].senha = newPass;
-        localStorage.setItem('users', JSON.stringify(users));
-    }
-
-    alert('Senha alterada com sucesso!');
-    const modalEl = document.getElementById('changePassModal');
-    const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-    modalInstance.hide();
-    newPassEl.value = '';
-    confirmPassEl.value = '';
+    if(idx > -1) users[idx] = user;
+    localStorage.setItem('users', JSON.stringify(users));
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('changePassConfirm');
-    if (btn) btn.addEventListener('click', changePassword);
-});
+// Alterar Senha (Lógica)
+function changePassword() {
+    const newPass = document.getElementById('newPass').value;
+    const conf = document.getElementById('confirmPass').value;
+    if(!newPass || newPass !== conf) return alert('Verifique as senhas.');
+
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const users = JSON.parse(localStorage.getItem('users'));
+    user.senha = newPass;
+    saveUser(user, users);
+    
+    alert('Senha alterada!');
+    bootstrap.Modal.getInstance(document.getElementById('changePassModal')).hide();
+}
