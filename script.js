@@ -507,6 +507,10 @@ function saveBookDetails() {
             newStatus = 'Para ler';
             document.getElementById('editStatus').value = 'Para ler';
         }
+        if (max > 0 && val === max) {
+            newStatus = 'Lido';
+            document.getElementById('editStatus').value = 'Lido';
+        }
         
         user.books[bookIndex].status = newStatus;
         user.books[bookIndex].currentPage = val;
