@@ -496,7 +496,19 @@ function saveBookDetails() {
         if (val < 0) return alert('Página inválida!');
         if (max > 0 && val > max) return alert(`A página não pode ser maior que ${max}!`);
         
-        user.books[bookIndex].status = document.getElementById('editStatus').value;
+        let newStatus = document.getElementById('editStatus').value;
+        
+        if (val > 0 && newStatus === 'Para ler') {
+            newStatus = 'Lendo';
+            document.getElementById('editStatus').value = 'Lendo';
+        }
+        
+        if (val === 0 && newStatus === 'Lendo') {
+            newStatus = 'Para ler';
+            document.getElementById('editStatus').value = 'Para ler';
+        }
+        
+        user.books[bookIndex].status = newStatus;
         user.books[bookIndex].currentPage = val;
         user.books[bookIndex].notes = document.getElementById('editNotes').value;
 
