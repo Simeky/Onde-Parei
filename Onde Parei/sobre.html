@@ -107,8 +107,21 @@
                     <h5 class="modal-title">Alterar Senha</h5>
                 </div>
                 <div class="modal-body">
-                    <input id="newPass" type="password" class="form-control mb-2" placeholder="Nova Senha">
-                    <input id="confirmPass" type="password" class="form-control" placeholder="Confirmar Senha">
+
+                    <div class="input-group mb-3">
+                        <input id="newPass" type="password" class="form-control" placeholder="Nova Senha">
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('newPass')">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <input id="confirmPass" type="password" class="form-control" placeholder="Confirmar Senha">
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPass')">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>

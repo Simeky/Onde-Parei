@@ -121,21 +121,35 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="changePassModal" tabindex="-1">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Alterar Senha</h5>
-                        </div>
-                        <div class="modal-body">
-                            <input id="newPass" type="password" class="form-control mb-2" placeholder="Nova Senha">
-                            <input id="confirmPass" type="password" class="form-control" placeholder="Confirmar Senha">
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-primary btn-sm" id="changePassConfirm">Confirmar</button>
-                        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changePassModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Senha</h5>
+                </div>
+                <div class="modal-body">
+
+                    <div class="input-group mb-3">
+                        <input id="newPass" type="password" class="form-control" placeholder="Nova Senha">
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('newPass')">
+                            <i class="fa fa-eye"></i>
+                        </button>
                     </div>
+
+                    <div class="input-group">
+                        <input id="confirmPass" type="password" class="form-control" placeholder="Confirmar Senha">
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPass')">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary btn-sm" id="changePassConfirm">Confirmar</button>
                 </div>
             </div>
         </div>
