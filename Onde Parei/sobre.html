@@ -84,11 +84,16 @@
                             </button>
                         </div>
                         <div class="col-6 text-center">
-                            <div class="form-check form-switch d-flex justify-content-center mb-3">
-                                <label class="form-check-label me-2" for="themeSwitch">Tema Dark</label>
-                                <input class="form-check-input" type="checkbox" id="themeSwitch"
-                                    onchange="toggleTheme()">
+
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <label class="me-2 text-nowrap" for="themeSwitch">Tema</label>
+
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" id="themeSwitch"
+                                        onchange="toggleTheme()">
+                                </div>
                             </div>
+
                             <button onclick="logout()" class="btn btn-outline-secondary btn-sm w-100 mb-2">Sair da
                                 Conta</button>
                             <button onclick="deleteAccount()" class="btn btn-outline-danger btn-sm w-100">Excluir
