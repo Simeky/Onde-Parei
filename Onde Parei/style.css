@@ -21,9 +21,16 @@ body {
 }
 
 .book-cover {
-    height: 250px;
-    object-fit: cover;
+    height: 300px;
     width: 100%;
+    object-fit: contain;
+}
+
+#modalBookCover {
+    width: 100%;
+    height: auto;       
+    max-height: 500px;
+    object-fit: contain; 
 }
 
 .status-tag {
