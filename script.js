@@ -1,16 +1,16 @@
 const API_NINJAS_KEY = 'qCe2H4YOn1LpGcK3uBd8Mw==DSDfKXW0uo5SWhzP';
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';
 const ITEMS_PER_PAGE = 8;
-const GOOGLE_CLIENT_ID = "564328782086-14nq74v0b6fsvl4gi9senu50thflplv5.apps.googleusercontent.com"; 
+const GOOGLE_CLIENT_ID = "564328782086-14nq74v0b6fsvl4gi9senu50thflplv5.apps.googleusercontent.com";
 
 let currentSearchQuery = '';
-let currentSearchIndex = 0; 
-let currentMyBooksPage = 1; 
+let currentSearchIndex = 0;
+let currentMyBooksPage = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
     updateHeaderUser();
-    
+
     const path = window.location.pathname.toLowerCase();
     const isPublic = path.includes('index.html') || path.includes('login.html') || path.includes('cadastro.html') || path.includes('sobre.html');
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnPass) btnPass.addEventListener('click', changePassword);
 });
 
-window.onload = function() {
+window.onload = function () {
     const btnDiv = document.getElementById("buttonDiv");
-    
+
     if (btnDiv && typeof google !== 'undefined') {
         google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
@@ -37,9 +37,8 @@ window.onload = function() {
         });
         google.accounts.id.renderButton(
             btnDiv,
-            { theme: "outline", size: "large", width: "100%", text: "signup_with" } 
+            { theme: "outline", size: "large", width: "100%", text: "signup_with" }
         );
-        // google.accounts.id.prompt(); // Pop-up automático
     } else if (btnDiv && typeof google === 'undefined') {
         console.error("O script do Google não carregou a tempo ou foi bloqueado.");
     }
@@ -51,8 +50,7 @@ function handleCredentialResponse(response) {
     const googleUser = {
         nome: data.name,
         email: data.email,
-        foto: data.picture,
-        senha: "", 
+        senha: "",
         books: [],
         isGoogle: true
     };
@@ -74,7 +72,7 @@ function handleCredentialResponse(response) {
 function decodeJwtResponse(token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
@@ -84,7 +82,7 @@ function applyTheme() {
     const theme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-bs-theme', theme);
     const themeSwitch = document.getElementById('themeSwitch');
-    if(themeSwitch) themeSwitch.checked = theme === 'dark';
+    if (themeSwitch) themeSwitch.checked = theme === 'dark';
 }
 
 function toggleTheme() {
@@ -151,19 +149,19 @@ function openDeleteModal() {
     const passGroup = document.getElementById('deletePassGroup');
     const emailGroup = document.getElementById('deleteEmailGroup');
     const emailLabel = document.getElementById('deleteEmailLabel');
-    
+
     document.getElementById('deletePassInput').value = '';
     document.getElementById('deleteEmailInput').value = '';
 
     if (user.isGoogle) {
-        if(passGroup) passGroup.style.display = 'none';
-        if(emailGroup) {
+        if (passGroup) passGroup.style.display = 'none';
+        if (emailGroup) {
             emailGroup.style.display = 'block';
             emailLabel.innerHTML = `Para segurança, digite <strong>${user.email}</strong> abaixo:`;
         }
     } else {
-        if(passGroup) passGroup.style.display = 'block';
-        if(emailGroup) emailGroup.style.display = 'none';
+        if (passGroup) passGroup.style.display = 'block';
+        if (emailGroup) emailGroup.style.display = 'none';
     }
 
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
@@ -172,10 +170,10 @@ function openDeleteModal() {
 
 function confirmDeleteAccount() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    
+
     const passInput = document.getElementById('deletePassInput').value;
     const emailInput = document.getElementById('deleteEmailInput').value;
-    
+
     if (user.isGoogle) {
         if (emailInput.trim() !== user.email) {
             alert(`O email digitado não confere!\nPor favor, digite exatamente: ${user.email}`);
@@ -191,14 +189,14 @@ function confirmDeleteAccount() {
             return;
         }
     }
-    
+
     let users = JSON.parse(localStorage.getItem('users')) || [];
     users = users.filter(u => u.email !== user.email);
     localStorage.setItem('users', JSON.stringify(users));
 
     const modalEl = document.getElementById('deleteAccountModal');
     const modal = bootstrap.Modal.getInstance(modalEl);
-    if(modal) modal.hide();
+    if (modal) modal.hide();
 
     alert("Conta excluída com sucesso.");
     logout();
@@ -209,10 +207,9 @@ function updateHeaderUser() {
     if (user) {
         const nameDisplay = document.getElementById('configUserName');
         const emailDisplay = document.getElementById('configUserEmail');
-        if(nameDisplay) nameDisplay.innerText = `Nome: ${user.nome}`;
-        if(emailDisplay) emailDisplay.innerText = `E-mail: ${user.email}`;
+        if (nameDisplay) nameDisplay.innerText = `Nome: ${user.nome}`;
+        if (emailDisplay) emailDisplay.innerText = `E-mail: ${user.email}`;
 
-        // Esconde botão de senha se for Google
         const btnChangePass = document.querySelector('[data-bs-target="#changePassModal"]');
         if (btnChangePass) {
             btnChangePass.style.display = user.isGoogle ? 'none' : 'block';
@@ -236,14 +233,14 @@ function initSearch() {
 async function searchBooks() {
     const container = document.getElementById('booksContainer');
     const paginationDiv = document.getElementById('paginationSearch');
-    
+
     container.innerHTML = '<p class="text-center">Carregando...</p>';
     paginationDiv.innerHTML = '';
 
     try {
         const res = await fetch(`${GOOGLE_BOOKS_API}?q=${currentSearchQuery}&startIndex=${currentSearchIndex}&maxResults=${ITEMS_PER_PAGE}`);
         const data = await res.json();
-        
+
         container.innerHTML = '';
 
         if (data.items) {
@@ -262,14 +259,14 @@ async function searchBooks() {
 }
 
 function formatGoogleBook(item) {
-    let imgLink = item.volumeInfo.imageLinks?.thumbnail || 
-                  item.volumeInfo.imageLinks?.smallThumbnail || 
-                  'https://via.placeholder.com/128x190?text=Sem+Capa';
+    let imgLink = item.volumeInfo.imageLinks?.thumbnail ||
+        item.volumeInfo.imageLinks?.smallThumbnail ||
+        'https://via.placeholder.com/128x190?text=Sem+Capa';
 
     if (imgLink) {
         imgLink = imgLink.replace('http://', 'https://');
-        imgLink = imgLink.replace('&zoom=1', '&zoom=0'); 
-        imgLink = imgLink.replace('&edge=curl', ''); 
+        imgLink = imgLink.replace('&zoom=1', '&zoom=0');
+        imgLink = imgLink.replace('&edge=curl', '');
     }
 
     return {
@@ -287,7 +284,7 @@ function renderSearchPagination() {
     const paginationDiv = document.getElementById('paginationSearch');
     const currentPage = (currentSearchIndex / ITEMS_PER_PAGE) + 1;
     const prevDisabled = currentSearchIndex === 0 ? 'disabled' : '';
-    
+
     let html = `
         <nav aria-label="Navegação de busca">
             <ul class="pagination justify-content-center">
@@ -320,14 +317,14 @@ function loadMyBooks() {
     const filter = document.getElementById('statusFilter').value;
     const container = document.getElementById('myBooksContainer');
     const paginationDiv = document.getElementById('paginationMyBooks');
-    
-    if (!container) return; 
+
+    if (!container) return;
 
     container.innerHTML = '';
-    
+
     if (!user.books || user.books.length === 0) {
         container.innerHTML = '<p class="text-center">Você ainda não adicionou livros.</p>';
-        if(paginationDiv) paginationDiv.innerHTML = '';
+        if (paginationDiv) paginationDiv.innerHTML = '';
         return;
     }
 
@@ -352,7 +349,7 @@ function loadMyBooks() {
         renderMyBooksPagination(totalPages);
     } else {
         container.innerHTML = '<p class="text-center">Nenhum livro encontrado com este filtro.</p>';
-        if(paginationDiv) paginationDiv.innerHTML = '';
+        if (paginationDiv) paginationDiv.innerHTML = '';
     }
 }
 
@@ -390,29 +387,38 @@ function changeMyBooksPage(direction) {
     currentMyBooksPage += direction;
     loadMyBooks();
     const mainContent = document.querySelector('.main-content');
-    if(mainContent) mainContent.scrollIntoView({ behavior: 'smooth' });
+    if (mainContent) mainContent.scrollIntoView({ behavior: 'smooth' });
 }
 
 function createBookCard(book, isMyBooks) {
     const bookJson = JSON.stringify(book).replace(/"/g, '&quot;');
     let highResImg = book.img;
-    
+
     if (highResImg && !highResImg.includes('via.placeholder.com')) {
         highResImg = highResImg.replace('http://', 'https://');
-        highResImg = highResImg.replace('&zoom=1', '&zoom=0'); 
-        highResImg = highResImg.replace('&edge=curl', ''); 
+        highResImg = highResImg.replace('&zoom=1', '&zoom=0');
+        highResImg = highResImg.replace('&edge=curl', '');
     }
 
-    let actionBtn = `<button class="btn btn-primary w-100 mt-2" onclick="addToMyBooks(${bookJson})">Adicionar</button>`;
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isSaved = user && user.books && user.books.some(b => b.id === book.id);
+
+    let actionBtn = '';
     let statusBadge = '';
 
     if (isMyBooks) {
         actionBtn = '';
         let badgeClass = 'bg-secondary';
-        if(book.status === 'Lendo') badgeClass = 'bg-lendo';
-        if(book.status === 'Para ler') badgeClass = 'bg-paraler';
-        if(book.status === 'Lido') badgeClass = 'bg-lido';
+        if (book.status === 'Lendo') badgeClass = 'bg-lendo';
+        if (book.status === 'Para ler') badgeClass = 'bg-paraler';
+        if (book.status === 'Lido') badgeClass = 'bg-lido';
         statusBadge = `<span class="status-tag ${badgeClass}">${book.status}</span>`;
+    } else {
+        if (isSaved) {
+            actionBtn = `<button id="btn-${book.id}" class="btn btn-success w-100 mt-2" onclick="toggleSearchBook(${bookJson})">Adicionado <i class="fa fa-check"></i></button>`;
+        } else {
+            actionBtn = `<button id="btn-${book.id}" class="btn btn-primary w-100 mt-2" onclick="toggleSearchBook(${bookJson})">Adicionar</button>`;
+        }
     }
 
     return `
@@ -435,22 +441,38 @@ function createBookCard(book, isMyBooks) {
     `;
 }
 
-function addToMyBooks(book) {
+function toggleSearchBook(book) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
-    if (!user.books) user.books = [];
-    
-    if (user.books.find(b => b.id === book.id)) {
-        return alert('Livro já está na sua lista!');
-    }
+    const btnElement = document.getElementById(`btn-${book.id}`);
 
-    book.status = 'Para ler';
-    book.currentPage = 0;
-    book.notes = '';
-    user.books.push(book);
-    
-    saveUser(user, users);
-    alert('Livro adicionado aos Meus Livros!');
+    if (!user.books) user.books = [];
+
+    const existingIndex = user.books.findIndex(b => b.id === book.id);
+
+    if (existingIndex > -1) {
+        if(!confirm('Deseja remover este livro da sua lista de leituras?')) return;
+        
+        user.books.splice(existingIndex, 1);
+        saveUser(user, users);
+        
+        if (btnElement) {
+            btnElement.className = "btn btn-primary w-100 mt-2";
+            btnElement.innerHTML = "Adicionar";
+        }
+
+    } else {
+        book.status = 'Para ler';
+        book.currentPage = 0;
+        book.notes = '';
+        
+        user.books.push(book);
+        saveUser(user, users);
+        if (btnElement) {
+            btnElement.className = "btn btn-success w-100 mt-2";
+            btnElement.innerHTML = 'Adicionado <i class="fa fa-check"></i>';
+        }
+    }
 }
 
 let currentEditingBookId = null;
@@ -461,18 +483,18 @@ function openBookModal(book) {
     const storedBook = user.books.find(b => b.id === book.id);
 
     document.getElementById('modalBookTitle').innerText = storedBook.title;
-    
+
     let modalImg = storedBook.img;
-    
+
     if (modalImg && !modalImg.includes('via.placeholder.com')) {
         modalImg = modalImg.replace('http://', 'https://');
         modalImg = modalImg.replace('&zoom=1', '&zoom=0');
         modalImg = modalImg.replace('&edge=curl', '');
     }
-    
+
     document.getElementById('modalBookCover').src = modalImg;
     document.getElementById('modalBookAuthor').innerText = storedBook.authors;
-    document.getElementById('modalBookPages').innerText = storedBook.pages;     
+    document.getElementById('modalBookPages').innerText = storedBook.pages;
     document.getElementById('editStatus').value = storedBook.status;
     document.getElementById('editPage').value = storedBook.currentPage || 0;
     document.getElementById('editNotes').value = storedBook.notes || '';
@@ -495,14 +517,14 @@ function saveBookDetails() {
 
         if (val < 0) return alert('Página inválida!');
         if (max > 0 && val > max) return alert(`A página não pode ser maior que ${max}!`);
-        
+
         let newStatus = document.getElementById('editStatus').value;
-        
+
         if (val > 0 && newStatus === 'Para ler') {
             newStatus = 'Lendo';
             document.getElementById('editStatus').value = 'Lendo';
         }
-        
+
         if (val === 0 && newStatus === 'Lendo') {
             newStatus = 'Para ler';
             document.getElementById('editStatus').value = 'Para ler';
@@ -511,7 +533,7 @@ function saveBookDetails() {
             newStatus = 'Lido';
             document.getElementById('editStatus').value = 'Lido';
         }
-        
+
         user.books[bookIndex].status = newStatus;
         user.books[bookIndex].currentPage = val;
         user.books[bookIndex].notes = document.getElementById('editNotes').value;
@@ -523,13 +545,13 @@ function saveBookDetails() {
 }
 
 function removeBookFromMyBooks() {
-    if(!confirm('Remover este livro?')) return;
+    if (!confirm('Remover este livro?')) return;
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
-    
+
     user.books = user.books.filter(b => b.id !== currentEditingBookId);
     saveUser(user, users);
-    
+
     loadMyBooks();
     bootstrap.Modal.getInstance(document.getElementById('bookDetailModal')).hide();
 }
@@ -537,20 +559,20 @@ function removeBookFromMyBooks() {
 function saveUser(user, users) {
     localStorage.setItem('currentUser', JSON.stringify(user));
     const idx = users.findIndex(u => u.email === user.email);
-    if(idx > -1) users[idx] = user;
+    if (idx > -1) users[idx] = user;
     localStorage.setItem('users', JSON.stringify(users));
 }
 
 function changePassword() {
     const newPass = document.getElementById('newPass').value;
     const conf = document.getElementById('confirmPass').value;
-    if(!newPass || newPass !== conf) return alert('Verifique as senhas.');
+    if (!newPass || newPass !== conf) return alert('Verifique as senhas.');
 
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const users = JSON.parse(localStorage.getItem('users'));
     user.senha = newPass;
     saveUser(user, users);
-    
+
     alert('Senha alterada!');
     bootstrap.Modal.getInstance(document.getElementById('changePassModal')).hide();
 }
