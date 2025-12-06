@@ -317,13 +317,18 @@ function loadMyBooks() {
     const filter = document.getElementById('statusFilter').value;
     const container = document.getElementById('myBooksContainer');
     const paginationDiv = document.getElementById('paginationMyBooks');
+    let vazio = `
+            <div class="col-12 text-center text-muted mb-5">Sua estante está vazia.</div>
+            <div class="col-12 text-center">
+                <img src="Logo_Onde_Parei_outline.webp" class="vazio" alt="Vazio">
+            </div>
+        `
 
     if (!container) return;
 
     container.innerHTML = '';
-
     if (!user.books || user.books.length === 0) {
-        container.innerHTML = '<p class="text-center">Você ainda não adicionou livros.</p>';
+        container.innerHTML = vazio;
         if (paginationDiv) paginationDiv.innerHTML = '';
         return;
     }
@@ -331,6 +336,12 @@ function loadMyBooks() {
     let filteredBooks = user.books.filter(book => {
         return filter === 'Todos' || book.status === filter;
     });
+
+    if (filteredBooks.length === 0) {
+        container.innerHTML = vazio;
+        if (paginationDiv) paginationDiv.innerHTML = '';
+        return;
+    }
 
     const totalBooks = filteredBooks.length;
     const totalPages = Math.ceil(totalBooks / ITEMS_PER_PAGE);
@@ -342,15 +353,10 @@ function loadMyBooks() {
     const end = start + ITEMS_PER_PAGE;
     const booksToShow = filteredBooks.slice(start, end);
 
-    if (booksToShow.length > 0) {
-        booksToShow.forEach(book => {
-            container.innerHTML += createBookCard(book, true);
-        });
-        renderMyBooksPagination(totalPages);
-    } else {
-        container.innerHTML = '<p class="text-center">Nenhum livro encontrado com este filtro.</p>';
-        if (paginationDiv) paginationDiv.innerHTML = '';
-    }
+    booksToShow.forEach(book => {
+        container.innerHTML += createBookCard(book, true);
+    });
+    renderMyBooksPagination(totalPages);
 }
 
 function renderMyBooksPagination(totalPages) {

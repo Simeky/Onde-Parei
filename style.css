@@ -84,3 +84,11 @@ body {
 .col-md-4 h5{
     margin-top: 1.5rem;
 }
+
+.vazio {
+    width: 350px;   
+    opacity: 0.15;        
+    filter: grayscale(100%);
+    margin: 0 auto;
+    pointer-events: none; 
+}
