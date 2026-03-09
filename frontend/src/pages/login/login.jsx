@@ -12,7 +12,10 @@ import {
 
 import { GoogleLogin } from '@react-oauth/google';
 
-import { fazerLogin } from '../../handleUsuarios';
+import {
+  fazerLogin,
+  loginComGoogle,
+} from '../../handleUsuarios';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -33,17 +36,21 @@ export default function Login() {
     }
   };
 
-  // Login com Google
   const lidarComLoginGoogle = async (credencialResponse) => {
-    const dadosDecodificados = jwtDecode(credencialResponse.credential);
-    console.log("Dados do Google:", dadosDecodificados);
-    
-    // tem que fazer o back disso aqui, mas por enquanto só mostro um alert pra confirmar que tá pegando os dados do Google certinho
-    // const resposta = await loginOuCadastroGoogle({ email: dadosDecodificados.email, nome: dadosDecodificados.name });
-    // localStorage.setItem('usuarioId', resposta.usuario.id);
-    // navegar('/busca');
-    
-    alert(`Autenticado pelo Google como: ${dadosDecodificados.email}\n(Falta só integrar com a rota do backend!)`);
+    try {
+      const dadosDecodificados = jwtDecode(credencialResponse.credential);
+      
+      const resposta = await loginComGoogle({ 
+        email: dadosDecodificados.email, 
+        nome: dadosDecodificados.name 
+      });
+
+      localStorage.setItem('usuarioId', resposta.usuario.id);
+      navegar('/busca');
+      
+    } catch {
+      setErro('Erro ao autenticar com o servidor do Google.');
+    }
   };
 
   return (
@@ -95,13 +102,12 @@ export default function Login() {
             Não possui conta? Cadastre-se
           </Link>
           
-          {/* O container flex garante que o botão fique centralizado */}
           <div className="d-flex justify-content-center w-100">
             <GoogleLogin
               onSuccess={lidarComLoginGoogle}
               onError={() => setErro('Falha ao conectar com o Google.')}
               useOneTap={false}
-              theme="filled_black" // Combina melhor com seu dark mode
+              theme="filled_black"
               shape="pill"
             />
           </div>

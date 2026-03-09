@@ -23,3 +23,8 @@ export const deletarConta = async (id) => {
   const resposta = await api.delete(`/deletar_conta/${id}`);
   return resposta.data;
 };
+
+export const loginComGoogle = async (dadosGoogle) => {
+  const resposta = await api.post('/login_google', dadosGoogle);
+  return resposta.data;
+};

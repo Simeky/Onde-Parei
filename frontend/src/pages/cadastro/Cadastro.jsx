@@ -9,7 +9,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { GoogleLogin } from '@react-oauth/google';
 
-import { cadastrarUsuario } from '../../handleUsuarios';
+import {
+  cadastrarUsuario,
+  loginComGoogle,
+} from '../../handleUsuarios';
 
 export default function Cadastro() {
   const [nome, setNome] = useState('');
@@ -37,10 +40,21 @@ export default function Cadastro() {
     }
   };
 
-  // Google Login (Implementar)
   const lidarComLoginGoogle = async (credencialResponse) => {
-    const dadosDecodificados = jwtDecode(credencialResponse.credential);
-    alert(`Autenticado pelo Google como: ${dadosDecodificados.email}\n(Pronto para conectar ao Backend!)`);
+    try {
+      const dadosDecodificados = jwtDecode(credencialResponse.credential);
+      
+      const resposta = await loginComGoogle({ 
+        email: dadosDecodificados.email, 
+        nome: dadosDecodificados.name 
+      });
+      
+      localStorage.setItem('usuarioId', resposta.usuario.id);
+      navegar('/busca');
+      
+    } catch {
+      setErro('Erro ao autenticar com o servidor do Google.');
+    }
   };
 
   return (
