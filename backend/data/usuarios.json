@@ -3,6 +3,7 @@
     "id": "1773096922669",
     "nome": "Guilherme Carsten Rayser",
     "email": "guilherme.rayser@gmail.com",
-    "senha": "$2b$10$QLKjG0Y4zVmpGDupIu9Feu6wzPXZtjvN1RhVfCK/w0lvEUtNi3kbq"
+    "senha": "$2b$10$QLKjG0Y4zVmpGDupIu9Feu6wzPXZtjvN1RhVfCK/w0lvEUtNi3kbq",
+    "provider": "google"
   }
 ]

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "1773353387945",
+    "usuario_id": "1773096922669",
+    "id_api": "/works/OL82563W",
+    "titulo": "Harry Potter and the Philosopher's Stone",
+    "autor": "J. K. Rowling",
+    "capa": "https://covers.openlibrary.org/b/id/15155833-M.jpg",
+    "status": "Para Ler",
+    "paginaAtual": 0,
+    "anotacao": ""
+  }
+]

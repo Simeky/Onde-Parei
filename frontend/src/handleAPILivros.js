@@ -1,26 +1,45 @@
 import axios from 'axios';
 
+const google_api_key = 'AIzaSyCB_j7-o4_jMjq7uvdnFYHvZBMDyrlVFV0';
+const apiGoogleBooks = axios.create({
+  baseURL: 'https://www.googleapis.com/books/v1'
+});
+
+
 export const buscarLivrosApiExterna = async (termo) => {
   try {
-    const resposta = await axios.get(`https://openlibrary.org/search.json`, {
+    const resposta = await apiGoogleBooks.get(`/volumes`, {
       params: {
         q: termo,
-        limit: 12, // Traz 12 resultados por vez
-        language: 'por' // Tenta priorizar português
+        maxResults: 12, // Traz 12 resultados por vez
+        langRestrict: 'pt', // Prioriza livros em português
+        key: google_api_key
       }
     });
-    
-    const livrosFormatados = resposta.data.docs.map(livro => ({
-      id_api: livro.key,
-      titulo: livro.title,
-      autor: livro.author_name ? livro.author_name[0] : 'Autor Desconhecido',
-      capa: livro.cover_i ? `https://covers.openlibrary.org/b/id/${livro.cover_i}-M.jpg` : null,
-      ano: livro.first_publish_year
-    }));
+
+    const itens = resposta.data.items || [];
+
+    const livrosFormatados = itens.map(livro => {
+      const info = livro.volumeInfo;
+      
+      // O Google às vezes retorna as capas em 'http'.
+      let capaUrl = info.imageLinks?.thumbnail || null;
+      if (capaUrl && capaUrl.startsWith('http://')) {
+        capaUrl = capaUrl.replace('http://', 'https://');
+      }
+
+      return {
+        id_api: livro.id,
+        titulo: info.title || 'Título Desconhecido',
+        autor: info.authors ? info.authors[0] : 'Autor Desconhecido',
+        capa: capaUrl,
+        ano: info.publishedDate ? info.publishedDate.substring(0, 4) : 'N/A' // Pega só os 4 primeiros dígitos do ano
+      };
+    });
 
     return livrosFormatados;
-  } catch (error) {
-    console.error("Erro ao buscar livros na Open Library:", error);
+  } catch (erro) {
+    console.error("Erro ao buscar livros na Google Books API:", erro);
     return []; 
   }
 };
