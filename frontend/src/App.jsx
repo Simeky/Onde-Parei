@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import BemVindo from './pages/bemVindo/BemVindo.jsx';
+import Busca from './pages/busca/Busca.jsx';
 import Cadastro from './pages/cadastro/Cadastro.jsx';
 import Login from './pages/login/login.jsx';
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<BemVindo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/busca" element={<Busca />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
