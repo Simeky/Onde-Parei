@@ -57,7 +57,7 @@ export default function Cabecalho() {
             <Link to="/busca" className={`text-decoration-none ${localizacao.pathname === '/busca' ? 'text-light fw-bold' : 'text-secondary'}`}>
               Livros
             </Link>
-            <Link to="/biblioteca" className={`text-decoration-none ${localizacao.pathname === '/biblioteca' ? 'text-light fw-bold' : 'text-secondary'}`}>
+            <Link to="/meus-livros" className={`text-decoration-none ${localizacao.pathname === '/meus-livros' ? 'text-light fw-bold' : 'text-secondary'}`}>
               Meus Livros
             </Link>
           </div>
