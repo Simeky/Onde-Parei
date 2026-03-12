@@ -18,7 +18,8 @@ router.post('/cadastrar', async (req, res) => {
     id: Date.now().toString(),
     nome,
     email,
-    senha: senhaCriptografada
+    senha: senhaCriptografada,
+    provider: 'local'
   };
 
   usuarios.push(novoUsuario);
@@ -72,7 +73,8 @@ router.post('/login_google', async (req, res) => {
       id: Date.now().toString(),
       nome: nome,
       email: email,
-      senha: senhaCriptografada
+      senha: senhaCriptografada,
+      provider: 'google'
     };
 
     usuarios.push(novoUsuario);
