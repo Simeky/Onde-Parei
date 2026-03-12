@@ -29,7 +29,8 @@ export default function Busca() {
         id_api: livro.id_api,
         titulo: livro.titulo,
         autor: livro.autor,
-        capa: livro.capa
+        capa: livro.capa,
+        ano: livro.ano // aproveita o campo retornado pela API de busca
       };
 
       await adicionarLivro(dadosParaSalvar);
