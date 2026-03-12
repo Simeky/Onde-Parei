@@ -59,9 +59,6 @@ export default function Busca() {
             </button>
           </div>
         </form>
-
-        <h3 className="mb-4 text-secondary border-bottom border-secondary pb-2">Resultados da Pesquisa</h3>
-
         {carregando && (
           <div className="text-center mt-5">
             <div className="spinner-border text-primary" role="status"></div>
