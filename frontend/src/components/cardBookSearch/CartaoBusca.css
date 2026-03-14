@@ -1,0 +1,18 @@
+/* Adicione ou verifique se estão assim no seu global.css */
+.book-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.book-cover {
+    height: 300px; 
+    width: 100%;
+    object-fit: contain !important;
+    background-color: #212529; 
+}

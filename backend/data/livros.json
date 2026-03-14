@@ -9,5 +9,27 @@
     "status": "Para Ler",
     "paginaAtual": 0,
     "anotacao": ""
+  },
+  {
+    "id": "1773504973460",
+    "usuario_id": "1773096922669",
+    "id_api": "PSjnEAAAQBAJ",
+    "titulo": "Call of the night (Vol. 5)",
+    "autor": "Kotoyama",
+    "capa": "https://books.google.com/books/content?id=PSjnEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "status": "Para Ler",
+    "paginaAtual": 0,
+    "anotacao": ""
+  },
+  {
+    "id": "1773510056376",
+    "usuario_id": "1773096922669",
+    "id_api": "WyjnEAAAQBAJ",
+    "titulo": "Call of the night (Vol. 7)",
+    "autor": "Kotoyama",
+    "capa": "https://books.google.com/books/content?id=WyjnEAAAQBAJ&printsec=frontcover&img=1&zoom=0&source=gbs_api",
+    "status": "Para Ler",
+    "paginaAtual": 0,
+    "anotacao": ""
   }
 ]

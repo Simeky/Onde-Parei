@@ -1,24 +1,70 @@
-import { useState } from 'react';
+import {
+  useEffect,
+  useState,
+} from 'react';
 
 import logoOutline from '../../assets/Logo_Onde_Parei_outline.webp';
 import CartaoLivro from '../../components/cardBookSearch/CartaoBusca.jsx';
 import Cabecalho from '../../components/header/Cabecalho.jsx';
-import { buscarLivrosApiExterna } from '../../handleAPILivros';
-import { adicionarLivro } from '../../handleLivros';
+import ModalRemover
+  from '../../components/modalRemoverLivro/ModalRemoverLivro.jsx';
+import { buscarLivrosApiExterna } from '../../handleAPILivros.js';
+import {
+  adicionarLivro,
+  listarMeusLivros,
+  removerLivro,
+} from '../../handleLivros';
 
 export default function Busca() {
   const [pesquisa, setPesquisa] = useState('');
   const [livros, setLivros] = useState([]);
   const [carregando, setCarregando] = useState(false);
+  const [minhaBiblioteca, setMinhaBiblioteca] = useState([]);
+  const [livroParaRemover, setLivroParaRemover] = useState(null);
+  
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [temMaisResultados, setTemMaisResultados] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true; 
+    const carregarMinhaBiblioteca = async () => {
+      try {
+        const usuarioId = localStorage.getItem('usuarioId');
+        if (usuarioId) {
+          const livrosSalvos = await listarMeusLivros(usuarioId);
+          if (isMounted) setMinhaBiblioteca(livrosSalvos);
+        }
+      } catch {
+        console.error("Erro ao carregar a biblioteca do usuário");
+      }
+    };
+    carregarMinhaBiblioteca();
+  }, []);
+
+  const realizarBuscaNaApi = async (termoPesquisa, numeroPagina) => {
+    setCarregando(true);
+    const startIndex = (numeroPagina - 1) * 12; 
+    
+    const resultados = await buscarLivrosApiExterna(termoPesquisa, startIndex);
+    
+    setLivros(resultados);
+    setTemMaisResultados(resultados.length === 12); 
+    setCarregando(false);
+  };
 
   const lidarComPesquisa = async (e) => {
     e.preventDefault();
     if (!pesquisa) return;
     
-    setCarregando(true);
-    const resultados = await buscarLivrosApiExterna(pesquisa);
-    setLivros(resultados);
-    setCarregando(false);
+    setPaginaAtual(1); 
+    await realizarBuscaNaApi(pesquisa, 1);
+  };
+
+  const mudarPagina = async (novaPagina) => {
+    setPaginaAtual(novaPagina);
+    await realizarBuscaNaApi(pesquisa, novaPagina);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const lidarComAdicionarLivro = async (livro) => {
@@ -30,13 +76,26 @@ export default function Busca() {
         titulo: livro.titulo,
         autor: livro.autor,
         capa: livro.capa,
-        ano: livro.ano // aproveita o campo retornado pela API de busca
+        paginas: livro.paginas, 
+        ano: livro.ano,
+        categoria: livro.categoria
       };
 
-      await adicionarLivro(dadosParaSalvar);
-      alert(`O livro "${livro.titulo}" foi adicionado à sua biblioteca!`);
+      const resposta = await adicionarLivro(dadosParaSalvar);
+      setMinhaBiblioteca([...minhaBiblioteca, resposta.livro]);
     } catch {
-      alert("Erro ao adicionar livro. Tente novamente.");
+      alert("Erro ao adicionar livro.");
+    }
+  };
+
+  const confirmarRemocao = async () => {
+    if (!livroParaRemover) return;
+    try {
+      await removerLivro(livroParaRemover.id);
+      setMinhaBiblioteca(minhaBiblioteca.filter(l => l.id !== livroParaRemover.id));
+      setLivroParaRemover(null);
+    } catch {
+      alert("Erro ao remover o livro.");
     }
   };
 
@@ -59,10 +118,12 @@ export default function Busca() {
             </button>
           </div>
         </form>
+
+        <h3 className="mb-4 text-secondary border-bottom border-secondary pb-2">Resultados da Pesquisa</h3>
+
         {carregando && (
           <div className="text-center mt-5">
             <div className="spinner-border text-primary" role="status"></div>
-            <p className="mt-2 text-secondary">Procurando no acervo...</p>
           </div>
         )}
 
@@ -74,15 +135,53 @@ export default function Busca() {
         )}
 
         {!carregando && livros.length > 0 && (
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-            {livros.map((livro) => (
-              <div className="col" key={livro.id_api}>
-                <CartaoLivro livro={livro} acaoAdicionar={lidarComAdicionarLivro} />
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+              {livros.map((livroGoogle) => {
+                const livroSalvo = minhaBiblioteca.find(l => l.id_api === livroGoogle.id_api);
+                return (
+                  <div className="col" key={livroGoogle.id_api}>
+                    <CartaoLivro 
+                      livro={livroGoogle} 
+                      livroNaBiblioteca={livroSalvo} 
+                      acaoAdicionar={lidarComAdicionarLivro} 
+                      acaoRemover={setLivroParaRemover} 
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="d-flex justify-content-center align-items-center mt-5 gap-3 pt-3 border-top border-secondary">
+              <button 
+                className="btn btn-outline-secondary rounded-pill px-4 fw-bold"
+                onClick={() => mudarPagina(paginaAtual - 1)}
+                disabled={paginaAtual === 1}
+              >
+                Anterior
+              </button>
+              
+              <span className="text-light fw-bold bg-dark border border-secondary rounded-pill px-4 py-2 shadow-sm">
+                Página {paginaAtual}
+              </span>
+              
+              <button 
+                className="btn btn-outline-primary rounded-pill px-4 fw-bold"
+                onClick={() => mudarPagina(paginaAtual + 1)}
+                disabled={!temMaisResultados}
+              >
+                Próxima
+              </button>
+            </div>
+          </>
         )}
       </main>
+
+      <ModalRemover 
+        livro={livroParaRemover} 
+        aoConfirmar={confirmarRemocao} 
+        aoCancelar={() => setLivroParaRemover(null)} 
+      />
     </div>
   );
 }
