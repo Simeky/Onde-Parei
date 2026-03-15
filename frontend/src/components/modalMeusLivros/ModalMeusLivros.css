@@ -1,0 +1,29 @@
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1050;
+}
+
+.modal-content-custom {
+    width: 800px;
+    max-width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: #212529;
+}
+
+.btn-close-custom {
+    z-index: 1060;
+}
+
+#modalBookCover {
+    width: 100%;
+    height: auto;       
+    max-height: 400px; 
+    object-fit: contain; 
+}
+
+.input-dark-custom {
+    background-color: #1a1d20 !important;
+    resize: none; 
+}

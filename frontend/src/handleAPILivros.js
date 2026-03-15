@@ -48,15 +48,3 @@ export const buscarLivrosApiExterna = async (termo, startIndex = 0) => {
     return []; 
   }
 };
-
-// busca detalhes adicionais de uma obra usando o identificador retornado pela pesquisa
-export const buscarDetalhesLivro = async (idApi) => {
-  if (!idApi) return null;
-  try {
-    const resposta = await axios.get(`https://openlibrary.org${idApi}.json`);
-    return resposta.data;
-  } catch (error) {
-    console.error('Erro ao buscar detalhes do livro:', error);
-    return null;
-  }
-};

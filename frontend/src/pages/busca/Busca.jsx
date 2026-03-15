@@ -130,7 +130,7 @@ export default function Busca() {
         {!carregando && livros.length === 0 && (
           <div className="text-center mt-5 text-secondary d-flex flex-column align-items-center">
             <p className="mb-4">Utilize a pesquisa acima para encontrar livros.</p>
-            <img src={logoOutline} alt="Coruja de fundo" width="350" style={{ opacity: 0.1 }} />
+            <img src={logoOutline} alt="Coruja de fundo" width="350" style={{ opacity: 0.15, filter: 'grayscale(100%)' }} />
           </div>
         )}
 

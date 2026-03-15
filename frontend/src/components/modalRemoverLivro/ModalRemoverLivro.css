@@ -1,0 +1,11 @@
+
+.modal-remover-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1050;
+}
+
+.modal-remover-content {
+    width: 350px;
+    border-radius: 12px;
+    background-color: #212529;
+}

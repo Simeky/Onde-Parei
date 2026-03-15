@@ -8,10 +8,10 @@ export default function CartaoLivro({ livro, livroNaBiblioteca, acaoAdicionar, a
   const isAdicionado = !!livroNaBiblioteca;
 
   return (
-    <div className="card book-card bg-dark text-light border-secondary p-3">
+    <div className="card book-card h-100 bg-dark text-light border-secondary p-3">
       <img
         src={livro.capa ? livro.capa : capaPadrao}
-        className="card-img-top book-cover"
+        className="card-img-top book-cover rounded"
         alt={`Capa do livro ${livro.titulo}`}
       />
 
@@ -21,7 +21,7 @@ export default function CartaoLivro({ livro, livroNaBiblioteca, acaoAdicionar, a
 
         <div className="mt-auto pt-2 border-top border-secondary">
           <p className="card-text small mb-1">Ano: {livro.ano} | Pág: {livro.paginas || 0}</p>
-          <p className="card-text text-secondary small text-truncate mb-2">{livro.categoria || 'Geral'}</p>
+          <p className="card-text text-secondary small text-truncate mb-3">{livro.categoria || 'Geral'}</p>
 
           {isAdicionado ? (
             <button
