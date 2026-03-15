@@ -1,3 +1,5 @@
+import './MeusLivros.css';
+
 import {
   useEffect,
   useState,
@@ -105,8 +107,7 @@ export default function Biblioteca() {
           <h2 className="m-0 text-light fw-bold">Meus Livros</h2>
           
           <select 
-            className="form-select text-light border-secondary shadow-sm" 
-            style={{ width: 'auto', minWidth: '150px', backgroundColor: '#1a1d20' }}
+            className="form-select text-light border-secondary shadow-sm filtro-dropdown" 
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
           >
@@ -128,7 +129,7 @@ export default function Biblioteca() {
             <p className="mb-4 fs-5">
                {filtro === 'Todos' ? 'Sua estante está vazia.' : `Nenhum livro com status "${filtro}".`}
             </p>
-            <img src={logoOutline} alt="Estante vazia" width="350" style={{ opacity: 0.15, filter: 'grayscale(100%)' }} />
+            <img src={logoOutline} alt="Estante vazia" className="imagem-vazia-biblioteca" />
           </div>
         )}
 

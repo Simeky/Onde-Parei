@@ -11,6 +11,7 @@
 .modal-config-content {
     background-color: #212529;
     border-radius: 12px;
+    width: 400px;
 }
 
 .modal-config-input {

@@ -27,7 +27,7 @@ export default function ModalExcluirConta({ usuario, aoCancelar, aoConcluirExclu
 
   return (
     <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay-darker">
-      <div className="card text-light border-secondary p-4 shadow-lg modal-config-content" style={{ width: '380px' }}>
+      <div className="card text-light border-secondary p-4 shadow-lg modal-config-content">
         <h5 className="text-danger mb-3">Excluir Conta</h5>
         <p className="small mb-4 text-secondary">
           Tem certeza? Essa ação apagará todos os seus livros e é <strong>irreversível</strong>.

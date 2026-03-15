@@ -67,7 +67,6 @@ export default function Cabecalho() {
         <button 
           className="btn btn-link text-secondary fs-4 p-0 btn-configuracao" 
           onClick={() => setModalAtivo(true)}
-          style={{ textDecoration: 'none' }}
         >
           <FaCog className="icone-engrenagem" />
         </button>

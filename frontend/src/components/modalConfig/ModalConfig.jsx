@@ -28,7 +28,7 @@ export default function ModalConfig({ usuario, aoFechar, aoLogout }) {
 
   return (
     <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay">
-      <div className="card text-light border-secondary p-0 shadow-lg modal-config-content" style={{ width: '400px' }}>
+      <div className="card text-light border-secondary p-0 shadow-lg modal-config-content">
         <div className="d-flex justify-content-between align-items-center border-bottom border-secondary p-3">
           <h5 className="m-0">Configurações</h5>
           <button className="btn btn-link text-secondary p-0" onClick={aoFechar}>
