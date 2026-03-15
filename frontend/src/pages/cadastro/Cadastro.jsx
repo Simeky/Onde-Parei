@@ -32,6 +32,22 @@ export default function Cadastro() {
       return setErro('As senhas não coincidem.');
     }
 
+    //regex é útil mas é um negócio esquisito né.
+    const regexMaiuscula = /[A-Z]/;
+    const regexMinuscula = /[a-z]/;
+    const regexNumero = /[0-9]/;
+    const regexEspecial = /[^A-Za-z0-9]/; 
+
+    if (
+      senha.length < 8 || 
+      !regexMaiuscula.test(senha) || 
+      !regexMinuscula.test(senha) || 
+      !regexNumero.test(senha) || 
+      !regexEspecial.test(senha)
+    ) {
+      return setErro('A senha não atende aos requisitos mínimos de segurança.');
+    }
+
     try {
       await cadastrarUsuario({ email, senha });
       alert('Cadastro realizado com sucesso! Faça login.');
@@ -97,7 +113,7 @@ export default function Cadastro() {
             </div>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="form-label text-secondary small mb-1">Confirmar Senha:</label>
             <div className="input-group">
               <input 
@@ -115,6 +131,17 @@ export default function Cadastro() {
                 {mostrarConfirmarSenha ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+          </div>
+
+          <div className="text-secondary small mb-4">
+            A senha deve conter pelo menos:
+            <ul className="list-unstyled ms-3 mt-1 mb-0">
+              <li>- 8 dígitos;</li>
+              <li>- 1 letra maiúscula;</li>
+              <li>- 1 letra minúscula;</li>
+              <li>- 1 número;</li>
+              <li>- 1 caractere especial.</li>
+            </ul>
           </div>
           
           <div className="d-flex justify-content-between border-top border-secondary pt-4 mb-4">
