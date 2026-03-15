@@ -1,3 +1,5 @@
+import './Login.css';
+
 import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
@@ -24,7 +26,6 @@ export default function Login() {
   const [erro, setErro] = useState('');
   const navegar = useNavigate();
 
-  // Login tradicional
   const lidarComSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -41,13 +42,11 @@ export default function Login() {
       const dadosDecodificados = jwtDecode(credencialResponse.credential);
       
       const resposta = await loginComGoogle({ 
-        email: dadosDecodificados.email, 
-        nome: dadosDecodificados.name 
+        email: dadosDecodificados.email
       });
 
       localStorage.setItem('usuarioId', resposta.usuario.id);
       navegar('/busca');
-      
     } catch {
       setErro('Erro ao autenticar com o servidor do Google.');
     }
@@ -55,18 +54,19 @@ export default function Login() {
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-light">
-      <div className="card bg-dark text-light border-secondary p-4 shadow-lg" style={{ width: '400px', borderRadius: '12px' }}>
+      <div className="card bg-dark text-light border-secondary p-4 shadow-lg login-card">
         <h2 className="text-center h4 mb-4">Login</h2>
         
         {erro && <div className="alert alert-danger py-2">{erro}</div>}
         
         <form onSubmit={lidarComSubmit}>
           <div className="mb-3">
-            <label className="form-label text-secondary small mb-1">Nome de usuário ou Email</label>
+            {/* Label simplificada */}
+            <label className="form-label text-secondary small mb-1">Email</label>
             <input 
               type="email" 
               className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja leitora"
+              placeholder="coruja@leitora.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required 

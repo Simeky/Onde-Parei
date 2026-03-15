@@ -10,11 +10,11 @@ router.get('/:id', (req, res) => {
   
   if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
   
-  res.status(200).json({ id: usuario.id, nome: usuario.nome, email: usuario.email, provider: usuario.provider });
+  res.status(200).json({ id: usuario.id, email: usuario.email, provider: usuario.provider });
 });
 
 router.post('/cadastrar', async (req, res) => {
-  const { nome, email, senha } = req.body;
+  const { email, senha } = req.body;
   const usuarios = lerDados('usuarios');
   
   if (usuarios.find(u => u.email === email)) {
@@ -25,7 +25,6 @@ router.post('/cadastrar', async (req, res) => {
 
   const novoUsuario = {
     id: Date.now().toString(),
-    nome,
     email,
     senha: senhaCriptografada,
     provider: 'local' 
@@ -34,7 +33,7 @@ router.post('/cadastrar', async (req, res) => {
   usuarios.push(novoUsuario);
   salvarDados('usuarios', usuarios);
   
-  res.status(201).json({ mensagem: 'Usuário criado com sucesso!', usuario: { id: novoUsuario.id, nome, email } });
+  res.status(201).json({ mensagem: 'Usuário criado com sucesso!', usuario: { id: novoUsuario.id, email } });
 });
 
 router.post('/login', async (req, res) => {
@@ -47,21 +46,20 @@ router.post('/login', async (req, res) => {
   const senhaValida = await bcrypt.compare(senha, usuario.senha);
   if (!senhaValida) return res.status(401).json({ erro: 'Senha incorreta.' });
 
-  res.status(200).json({ mensagem: 'Login realizado com sucesso!', usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email } });
+  res.status(200).json({ mensagem: 'Login realizado com sucesso!', usuario: { id: usuario.id, email: usuario.email } });
 });
 
 router.post('/login_google', async (req, res) => {
-  const { email, nome } = req.body;
+  const { email } = req.body;
   const usuarios = lerDados('usuarios');
   const usuarioExistente = usuarios.find(u => u.email === email);
 
   if (usuarioExistente) {
-    return res.status(200).json({ mensagem: 'Login com Google realizado com sucesso!', usuario: { id: usuarioExistente.id, nome: usuarioExistente.nome, email: usuarioExistente.email } });
+    return res.status(200).json({ mensagem: 'Login com Google realizado com sucesso!', usuario: { id: usuarioExistente.id, email: usuarioExistente.email } });
   } else {
     const senhaCriptografada = await bcrypt.hash(Date.now().toString(), 10);
     const novoUsuario = {
       id: Date.now().toString(),
-      nome: nome,
       email: email,
       senha: senhaCriptografada,
       provider: 'google'
@@ -69,7 +67,7 @@ router.post('/login_google', async (req, res) => {
 
     usuarios.push(novoUsuario);
     salvarDados('usuarios', usuarios);
-    return res.status(201).json({ mensagem: 'Conta criada e vinculada ao Google com sucesso!', usuario: { id: novoUsuario.id, nome: novoUsuario.nome, email: novoUsuario.email } });
+    return res.status(201).json({ mensagem: 'Conta criada e vinculada ao Google com sucesso!', usuario: { id: novoUsuario.id, email: novoUsuario.email } });
   }
 });
 

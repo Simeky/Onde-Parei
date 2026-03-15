@@ -1,3 +1,5 @@
+import './Cabecalho.css';
+
 import {
   useEffect,
   useState,
@@ -63,10 +65,11 @@ export default function Cabecalho() {
         </div>
 
         <button 
-          className="btn btn-link text-secondary fs-4" 
+          className="btn btn-link text-secondary fs-4 p-0 btn-configuracao" 
           onClick={() => setModalAtivo(true)}
+          style={{ textDecoration: 'none' }}
         >
-          <FaCog />
+          <FaCog className="icone-engrenagem" />
         </button>
       </nav>
 

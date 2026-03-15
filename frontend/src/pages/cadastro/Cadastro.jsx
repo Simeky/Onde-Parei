@@ -1,3 +1,5 @@
+import './Cadastro.css';
+
 import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
@@ -15,7 +17,6 @@ import {
 } from '../../handleUsuarios';
 
 export default function Cadastro() {
-  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -32,7 +33,7 @@ export default function Cadastro() {
     }
 
     try {
-      await cadastrarUsuario({ nome, email, senha });
+      await cadastrarUsuario({ email, senha });
       alert('Cadastro realizado com sucesso! Faça login.');
       navegar('/login');
     } catch {
@@ -45,8 +46,7 @@ export default function Cadastro() {
       const dadosDecodificados = jwtDecode(credencialResponse.credential);
       
       const resposta = await loginComGoogle({ 
-        email: dadosDecodificados.email, 
-        nome: dadosDecodificados.name 
+        email: dadosDecodificados.email
       });
       
       localStorage.setItem('usuarioId', resposta.usuario.id);
@@ -59,7 +59,7 @@ export default function Cadastro() {
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-light">
-      <div className="card bg-dark text-light border-secondary p-4 shadow-lg" style={{ width: '450px', borderRadius: '12px' }}>
+      <div className="card bg-dark text-light border-secondary p-4 shadow-lg cadastro-card">
         <h2 className="text-center h4 mb-4">Cadastro</h2>
         
         {erro && <div className="alert alert-danger py-2">{erro}</div>}
@@ -70,21 +70,9 @@ export default function Cadastro() {
             <input 
               type="email" 
               className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja@leitora.com"
+              placeholder="coruja@leitora.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label text-secondary small mb-1">Nome de usuário:</label>
-            <input 
-              type="text" 
-              className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja Leitora"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
               required 
             />
           </div>

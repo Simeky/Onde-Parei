@@ -1,3 +1,5 @@
+import './Busca.css';
+
 import {
   useEffect,
   useState,
@@ -26,19 +28,23 @@ export default function Busca() {
   const [temMaisResultados, setTemMaisResultados] = useState(false);
 
   useEffect(() => {
-    let isMounted = true; 
+    let Montado = true; 
     const carregarMinhaBiblioteca = async () => {
       try {
         const usuarioId = localStorage.getItem('usuarioId');
         if (usuarioId) {
           const livrosSalvos = await listarMeusLivros(usuarioId);
-          if (isMounted) setMinhaBiblioteca(livrosSalvos);
+          if (Montado) setMinhaBiblioteca(livrosSalvos);
         }
       } catch {
         console.error("Erro ao carregar a biblioteca do usuário");
       }
     };
     carregarMinhaBiblioteca();
+    
+    return () => {
+      Montado = false;
+    };
   }, []);
 
   const realizarBuscaNaApi = async (termoPesquisa, numeroPagina) => {
@@ -105,7 +111,7 @@ export default function Busca() {
       
       <main className="container mt-5">
         <form onSubmit={lidarComPesquisa} className="d-flex justify-content-center mb-5">
-          <div className="input-group shadow-sm" style={{ maxWidth: '600px' }}>
+          <div className="input-group shadow-sm busca-input-container">
             <input 
               type="text" 
               className="form-control bg-dark text-light border-secondary" 
@@ -130,7 +136,7 @@ export default function Busca() {
         {!carregando && livros.length === 0 && (
           <div className="text-center mt-5 text-secondary d-flex flex-column align-items-center">
             <p className="mb-4">Utilize a pesquisa acima para encontrar livros.</p>
-            <img src={logoOutline} alt="Coruja de fundo" width="350" style={{ opacity: 0.15, filter: 'grayscale(100%)' }} />
+            <img src={logoOutline} alt="Coruja de fundo" width="350" className="busca-coruja-fundo" />
           </div>
         )}
 

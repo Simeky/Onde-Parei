@@ -19,22 +19,11 @@ export default function ModalConfig({ usuario, aoFechar, aoLogout }) {
   }
 
   if (subModalAberto === 'senha') {
-    return (
-      <ModalAlterarSenha 
-        usuario={usuario}
-        aoCancelar={() => setSubModalAberto(null)} 
-      />
-    );
+    return <ModalAlterarSenha usuario={usuario} aoCancelar={() => setSubModalAberto(null)} />;
   }
 
   if (subModalAberto === 'excluir') {
-    return (
-      <ModalExcluirConta 
-        usuario={usuario}
-        aoCancelar={() => setSubModalAberto(null)}
-        aoConcluirExclusao={aoLogout} 
-      />
-    );
+    return <ModalExcluirConta usuario={usuario} aoCancelar={() => setSubModalAberto(null)} aoConcluirExclusao={aoLogout} />;
   }
 
   return (
@@ -48,9 +37,8 @@ export default function ModalConfig({ usuario, aoFechar, aoLogout }) {
         </div>
         
         <div className="p-4">
-          <div className="mb-4">
-            <h6 className="fw-bold mb-1">{usuario.nome}</h6>
-            <p className="text-secondary small m-0">E-mail: {usuario.email}</p>
+          <div className="mb-4 text-center">
+            <p className="fs-6 m-0">Email: {usuario.email}</p>
           </div>
           
           <div className="d-flex flex-column gap-2">
