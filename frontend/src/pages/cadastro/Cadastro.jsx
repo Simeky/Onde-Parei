@@ -1,3 +1,5 @@
+import './Cadastro.css';
+
 import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
@@ -15,7 +17,6 @@ import {
 } from '../../handleUsuarios';
 
 export default function Cadastro() {
-  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -31,8 +32,24 @@ export default function Cadastro() {
       return setErro('As senhas não coincidem.');
     }
 
+    //regex é útil mas é um negócio esquisito né.
+    const regexMaiuscula = /[A-Z]/;
+    const regexMinuscula = /[a-z]/;
+    const regexNumero = /[0-9]/;
+    const regexEspecial = /[^A-Za-z0-9]/; 
+
+    if (
+      senha.length < 8 || 
+      !regexMaiuscula.test(senha) || 
+      !regexMinuscula.test(senha) || 
+      !regexNumero.test(senha) || 
+      !regexEspecial.test(senha)
+    ) {
+      return setErro('A senha não atende aos requisitos mínimos de segurança.');
+    }
+
     try {
-      await cadastrarUsuario({ nome, email, senha });
+      await cadastrarUsuario({ email, senha });
       alert('Cadastro realizado com sucesso! Faça login.');
       navegar('/login');
     } catch {
@@ -45,8 +62,7 @@ export default function Cadastro() {
       const dadosDecodificados = jwtDecode(credencialResponse.credential);
       
       const resposta = await loginComGoogle({ 
-        email: dadosDecodificados.email, 
-        nome: dadosDecodificados.name 
+        email: dadosDecodificados.email
       });
       
       localStorage.setItem('usuarioId', resposta.usuario.id);
@@ -58,8 +74,8 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-light">
-      <div className="card bg-dark text-light border-secondary p-4 shadow-lg" style={{ width: '450px', borderRadius: '12px' }}>
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-body text-body">
+      <div className="card bg-body border-secondary p-4 shadow-lg cadastro-card">
         <h2 className="text-center h4 mb-4">Cadastro</h2>
         
         {erro && <div className="alert alert-danger py-2">{erro}</div>}
@@ -69,22 +85,10 @@ export default function Cadastro() {
             <label className="form-label text-secondary small mb-1">Email:</label>
             <input 
               type="email" 
-              className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja@leitora.com"
+              className="form-control bg-body text-body border-secondary" 
+              placeholder="coruja@leitora.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label text-secondary small mb-1">Nome de usuário:</label>
-            <input 
-              type="text" 
-              className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja Leitora"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
               required 
             />
           </div>
@@ -94,14 +98,14 @@ export default function Cadastro() {
             <div className="input-group">
               <input 
                 type={mostrarSenha ? "text" : "password"} 
-                className="form-control bg-dark text-light border-secondary border-end-0" 
+                className="form-control bg-body text-body border-secondary border-end-0" 
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required 
               />
               <button 
                 type="button" 
-                className="btn btn-outline-secondary bg-dark text-light border-secondary border-start-0" 
+                className="btn btn-outline-secondary bg-body text-body border-secondary border-start-0" 
                 onClick={() => setMostrarSenha(!mostrarSenha)}
               >
                 {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
@@ -109,24 +113,35 @@ export default function Cadastro() {
             </div>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="form-label text-secondary small mb-1">Confirmar Senha:</label>
             <div className="input-group">
               <input 
                 type={mostrarConfirmarSenha ? "text" : "password"} 
-                className="form-control bg-dark text-light border-secondary border-end-0" 
+                className="form-control bg-body text-body border-secondary border-end-0" 
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 required 
               />
               <button 
                 type="button" 
-                className="btn btn-outline-secondary bg-dark text-light border-secondary border-start-0" 
+                className="btn btn-outline-secondary bg-body text-body border-secondary border-start-0" 
                 onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
               >
                 {mostrarConfirmarSenha ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+          </div>
+
+          <div className="text-secondary small mb-4">
+            A senha deve conter pelo menos:
+            <ul className="list-unstyled ms-3 mt-1 mb-0">
+              <li>- 8 dígitos;</li>
+              <li>- 1 letra maiúscula;</li>
+              <li>- 1 letra minúscula;</li>
+              <li>- 1 número;</li>
+              <li>- 1 caractere especial.</li>
+            </ul>
           </div>
           
           <div className="d-flex justify-content-between border-top border-secondary pt-4 mb-4">
@@ -139,7 +154,7 @@ export default function Cadastro() {
               onSuccess={lidarComLoginGoogle}
               onError={() => setErro('Falha ao conectar com o Google.')}
               useOneTap={false}
-              theme="filled_black"
+              theme="outline"
               shape="pill"
             />
           </div>

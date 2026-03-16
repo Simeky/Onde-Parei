@@ -4,6 +4,11 @@ const api = axios.create({
   baseURL: 'http://localhost:5000/usuarios'
 });
 
+export const buscarUsuarioPorId = async (id) => {
+  const resposta = await api.get(`/${id}`);
+  return resposta.data;
+};
+
 export const cadastrarUsuario = async (dadosUsuario) => {
   const resposta = await api.post('/cadastrar', dadosUsuario);
   return resposta.data;
@@ -19,8 +24,8 @@ export const atualizarSenha = async (id, novaSenha) => {
   return resposta.data;
 };
 
-export const deletarConta = async (id) => {
-  const resposta = await api.delete(`/deletar_conta/${id}`);
+export const deletarConta = async (id, dadosValidacao) => {
+  const resposta = await api.delete(`/deletar_conta/${id}`, { data: dadosValidacao });
   return resposta.data;
 };
 

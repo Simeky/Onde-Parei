@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
   BrowserRouter,
   Navigate,
@@ -12,6 +14,11 @@ import Login from './pages/login/login.jsx';
 import MeusLivros from './pages/meusLivros/meusLivros.jsx';
 
 function App() {
+  useEffect(() => {
+    const temaSalvo = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-bs-theme', temaSalvo);
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
