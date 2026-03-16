@@ -20,7 +20,7 @@ export default function CartaoLivro({ livro, livroNaBiblioteca, acaoAdicionar, a
         <p className="card-text text-secondary small mb-1 text-truncate">Autor: {livro.autor}</p>
 
         <div className="mt-auto pt-2 border-top border-secondary">
-          <p className="card-text small mb-1">Ano: {livro.ano} | Pág: {livro.paginas || 0}</p>
+          <p className="card-text small mb-1">Ano: {livro.ano ? String(livro.ano).substring(0, 4) : 'N/A'} | Pág: {livro.paginas || 0}</p>
           <p className="card-text text-secondary small text-truncate mb-3">{livro.categoria || 'Geral'}</p>
 
           {isAdicionado ? (

@@ -83,7 +83,7 @@ export default function Busca() {
         autor: livro.autor,
         capa: livro.capa,
         paginas: livro.paginas, 
-        ano: livro.ano,
+        ano: livro.ano ? String(livro.ano).substring(0, 4) : 'N/A',
         categoria: livro.categoria
       };
 

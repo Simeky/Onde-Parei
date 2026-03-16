@@ -34,7 +34,7 @@ export default function CartaoMeusLivros({ livro, aoClicar }) {
         <p className="card-text text-secondary small mb-1 text-truncate">Autor: {livro.autor}</p>
         
         <div className="mt-auto pt-2 border-top border-secondary">
-          <p className="card-text small mb-1">Ano: {livro.ano} | Pág: {livro.paginas || 0}</p>
+          <p className="card-text small mb-1">Ano: {livro.ano} | Pág. onde parei: {livro.paginaAtual || 0}</p>
           <p className="card-text text-secondary small text-truncate mb-0">{livro.categoria || 'Geral'}</p>
         </div>
       </div>

@@ -39,7 +39,7 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
   };
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 modal-overlay ">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 modal-overlay bg-dark bg-opacity-50">
       <div className="card text-body border-secondary p-0 shadow-lg position-relative modal-content-custom bg-body">
         <button 
           className="btn btn-link text-secondary position-absolute top-0 end-0 m-3 p-0 btn-close-custom" 

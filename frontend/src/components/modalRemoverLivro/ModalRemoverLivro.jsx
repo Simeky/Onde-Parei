@@ -4,7 +4,7 @@ export default function ModalRemover({ livro, aoConfirmar, aoCancelar }) {
   if (!livro) return null;
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 modal-remover-overlay">
       <div className="card text-body bg-body order-secondary p-4 shadow-lg modal-remover-content">
         <h5 className="mb-3 text-danger">Remover da Biblioteca</h5>
         <p className="small mb-4 text-secondary">
