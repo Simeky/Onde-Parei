@@ -1,6 +1,6 @@
 # 🦉 Onde Parei - Gestor de Leituras Pessoais
 
-## 1. Contexto Escolhido para o Projeto
+## 1. Contexto
 O contexto escolhido para este projeto foi o desenvolvimento de um **Gestor de Biblioteca e Leituras Pessoais**. Muitos leitores têm dificuldade em lembrar em qual página pararam a leitura, quais livros estão na sua "lista de desejos" e quais já foram concluídos. O "Onde Parei" resolve esse problema oferecendo uma interface limpa onde o usuário pode buscar livros reais (via integração com o Google Books), adicioná-los à sua estante virtual, e gerenciar suas anotações, status (Lendo, Lido, Para ler) e página atual de forma intuitiva.
 
 ## 2. Arquitetura Adotada
