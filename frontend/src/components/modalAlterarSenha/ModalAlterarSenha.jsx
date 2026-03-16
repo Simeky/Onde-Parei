@@ -2,7 +2,7 @@ import '../modaisConfigStyle/ModaisConfig.css';
 
 import { useState } from 'react';
 
-import { atualizarSenha } from '../../handleUsuarios.js';
+import { atualizarSenha } from '../../services/handleUsuarios.js';
 
 export default function ModalAlterarSenha({ usuario, aoCancelar }) {
   const [novaSenha, setNovaSenha] = useState('');
