@@ -17,7 +17,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import {
   fazerLogin,
   loginComGoogle,
-} from '../../handleUsuarios';
+} from '../../services/handleUsuarios.js';
 
 export default function Login() {
   const [email, setEmail] = useState('');

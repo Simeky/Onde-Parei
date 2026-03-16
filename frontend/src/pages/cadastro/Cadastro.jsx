@@ -14,7 +14,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import {
   cadastrarUsuario,
   loginComGoogle,
-} from '../../handleUsuarios';
+} from '../../services/handleUsuarios.js';
 
 export default function Cadastro() {
   const [email, setEmail] = useState('');

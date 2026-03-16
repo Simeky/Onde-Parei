@@ -17,7 +17,7 @@ import {
   atualizarLivro,
   listarMeusLivros,
   removerLivro,
-} from '../../handleLivros';
+} from '../../services/handleLivros.js';
 
 export default function Biblioteca() {
   const [livros, setLivros] = useState([]);
