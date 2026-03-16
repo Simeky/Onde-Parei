@@ -13,7 +13,6 @@ import ModalRemover
 import {
   adicionarLivro,
   listarMeusLivros,
-  removerLivro,
 } from '../../services/handleLivros.js';
 import { buscarLivrosApiExterna } from './handleAPILivros.js';
 
@@ -94,15 +93,9 @@ export default function Busca() {
     }
   };
 
-  const confirmarRemocao = async () => {
-    if (!livroParaRemover) return;
-    try {
-      await removerLivro(livroParaRemover.id);
-      setMinhaBiblioteca(minhaBiblioteca.filter(l => l.id !== livroParaRemover.id));
-      setLivroParaRemover(null);
-    } catch {
-      alert("Erro ao remover o livro.");
-    }
+  const concluirRemocao = (idRemovido) => {
+    setMinhaBiblioteca(minhaBiblioteca.filter(l => l.id !== idRemovido));
+    setLivroParaRemover(null);
   };
 
   return (
@@ -185,7 +178,7 @@ export default function Busca() {
 
       <ModalRemover 
         livro={livroParaRemover} 
-        aoConfirmar={confirmarRemocao} 
+        aoConcluirRemocao={concluirRemocao} 
         aoCancelar={() => setLivroParaRemover(null)} 
       />
     </div>

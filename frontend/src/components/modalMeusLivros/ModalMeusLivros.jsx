@@ -4,14 +4,17 @@ import { useState } from 'react';
 
 import { FaTimes } from 'react-icons/fa';
 
-export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar }) {
+import { atualizarLivro } from '../../services/handleLivros.js';
+
+export default function ModalEdicaoLivro({ livro, aoConcluirEdicao, aoRemover, aoFechar }) {
   const [paginaAtual, setPaginaAtual] = useState(livro?.paginaAtual || 0);
   const [anotacao, setAnotacao] = useState(livro?.anotacao || '');
   const [status, setStatus] = useState(livro?.status || 'Para ler');
+  const [carregando, setCarregando] = useState(false);
 
   if (!livro) return null;
 
-  const lidarComSalvar = () => {
+  const lidarComSalvar = async () => {
     const totalPaginas = parseInt(livro.paginas, 10) || 0;
     let novoPaginaAtual = parseInt(paginaAtual, 10);
 
@@ -35,7 +38,15 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
       novoStatus = 'Lido';
     }
 
-    aoSalvar({ ...livro, paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+    setCarregando(true);
+    try {
+      await atualizarLivro(livro.id, { paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+      
+      aoConcluirEdicao({ ...livro, paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+    } catch {
+      alert("Erro ao salvar progresso.");
+      setCarregando(false);
+    }
   };
 
   return (
@@ -102,8 +113,10 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
             </div>
 
             <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
-              <button className="btn btn-danger px-4 flex-grow-1 flex-md-grow-0" onClick={() => aoRemover(livro)}>Remover</button>
-              <button className="btn btn-success px-4 flex-grow-1 flex-md-grow-0" onClick={lidarComSalvar}>Salvar Progresso</button>
+              <button className="btn btn-danger px-4 flex-grow-1 flex-md-grow-0" onClick={() => aoRemover(livro)} disabled={carregando}>Remover</button>
+              <button className="btn btn-success px-4 flex-grow-1 flex-md-grow-0" onClick={lidarComSalvar} disabled={carregando}>
+                {carregando ? 'Salvando...' : 'Salvar Progresso'}
+              </button>
             </div>
           </div>
         </div>

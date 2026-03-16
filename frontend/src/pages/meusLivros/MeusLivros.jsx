@@ -13,11 +13,7 @@ import ModalEdicaoLivro
   from '../../components/modalMeusLivros/ModalMeusLivros.jsx';
 import ModalRemover
   from '../../components/modalRemoverLivro/ModalRemoverLivro.jsx';
-import {
-  atualizarLivro,
-  listarMeusLivros,
-  removerLivro,
-} from '../../services/handleLivros.js';
+import { listarMeusLivros } from '../../services/handleLivros.js';
 
 export default function MeusLivros() {
   const [livros, setLivros] = useState([]);
@@ -53,34 +49,18 @@ export default function MeusLivros() {
     }
   };
 
-  const lidarComSalvarEdicao = async (livroAtualizado) => {
-    try {
-      await atualizarLivro(livroAtualizado.id, {
-        paginaAtual: livroAtualizado.paginaAtual,
-        anotacao: livroAtualizado.anotacao,
-        status: livroAtualizado.status
-      });
-      
-      setLivros(livros.map(l => l.id === livroAtualizado.id ? livroAtualizado : l));
-      setLivroSendoEditado(null); 
-    } catch {
-      alert("Erro ao salvar progresso.");
-    }
+  const concluirEdicao = (livroAtualizado) => {
+    setLivros(livros.map(l => l.id === livroAtualizado.id ? livroAtualizado : l));
+    setLivroSendoEditado(null); 
   };
 
-  const confirmarRemocao = async () => {
-    if (!livroParaRemover) return;
-    try {
-      await removerLivro(livroParaRemover.id);
-      setLivros(livros.filter(l => l.id !== livroParaRemover.id));
-      setLivroParaRemover(null); 
-      setLivroSendoEditado(null); 
-      
-      if (livrosPaginados.length === 1 && paginaAtual > 1) {
-        setPaginaAtual(paginaAtual - 1);
-      }
-    } catch {
-      alert("Erro ao remover o livro.");
+  const concluirRemocao = (idRemovido) => {
+    setLivros(livros.filter(l => l.id !== idRemovido));
+    setLivroParaRemover(null); 
+    setLivroSendoEditado(null); 
+    
+    if (livrosPaginados.length === 1 && paginaAtual > 1) {
+      setPaginaAtual(paginaAtual - 1);
     }
   };
 
@@ -183,7 +163,7 @@ export default function MeusLivros() {
         <ModalEdicaoLivro 
           key={livroSendoEditado.id} 
           livro={livroSendoEditado}
-          aoSalvar={lidarComSalvarEdicao}
+          aoConcluirEdicao={concluirEdicao}
           aoRemover={prepararRemocao}
           aoFechar={() => setLivroSendoEditado(null)}
         />
@@ -191,7 +171,7 @@ export default function MeusLivros() {
 
       <ModalRemover 
         livro={livroParaRemover}
-        aoConfirmar={confirmarRemocao}
+        aoConcluirRemocao={concluirRemocao}
         aoCancelar={() => setLivroParaRemover(null)}
       />
     </div>
