@@ -15,18 +15,19 @@ export default function ModalRemover({ livro, aoConcluirRemocao, aoCancelar }) {
     try {
       await removerLivro(livro.id);
       aoConcluirRemocao(livro.id);
-    } catch {
+    } 
+    catch {
       setErro("Erro ao remover o livro.");
-      setCarregando(false);
     }
+    setCarregando(false);
   };
 
   return (
     <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 modal-remover-overlay">
       <div className="card text-body bg-body border-secondary p-4 shadow-lg modal-remover-content">
-        <h5 className="mb-3 text-danger">Remover da Biblioteca</h5>
+        <h5 className="mb-3 text-danger">Remover de Meus Livros</h5>
         <p className="small mb-4 text-secondary">
-          Tem certeza que deseja remover <strong>{livro.titulo}</strong> da sua biblioteca? Você perderá as suas anotações e a página em que parou.
+          Tem certeza que deseja remover <strong>{livro.titulo}</strong> da seus livros? Você perderá as suas anotações e a página em que parou.
         </p>
 
         {erro && <div className="alert alert-danger py-2 small">{erro}</div>}
