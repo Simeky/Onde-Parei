@@ -22,7 +22,7 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
    ┃ ┣ 📂 assets       # Recursos estáticos (imagens, logótipos)
    ┃ ┣ 📂 components   # Componentes modulares e reutilizáveis (Cartões, Modais, Cabeçalho)
    ┃ ┣ 📂 pages        # Ecrãs principais da aplicação (Busca, MeusLivros, Login, Cadastro)
-   ┃ ┣ 📂 services     # Camada de abstração para chamadas HTTP com Axios (livroService, usuarioService)
+   ┃ ┣ 📂 services     # Camada de abstração para chamadas HTTP com Axios (handleLivros, handleUsuarios)
    ┃ ┣ 📜 App.jsx      # Configuração central das rotas (React Router)
    ┃ ┗ 📜 main.jsx     # Ponto de entrada do React
 ```
