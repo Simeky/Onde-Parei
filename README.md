@@ -8,6 +8,25 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
 * **Frontend (Cliente):** Desenvolvido como uma SPA (Single Page Application) utilizando **React.js** e Vite. Responsável por toda a interface gráfica, roteamento e consumo das APIs.
 * **Backend (Servidor):** Construído com **Node.js** e **Express**. Atua como uma API RESTful, responsável pela regra de negócios, segurança (hash de senhas com bcrypt) e persistência dos dados.
 
+### Estrutura de Pastas 📂
+```
+📦 Onde-Parei
+ ┣ 📂 backend
+ ┃ ┣ 📂 data           # Ficheiros JSON para persistência (usuarios.json, livros.json)
+ ┃ ┣ 📂 routes         # Endpoints da API (livros.routes.js, usuarios.routes.js)
+ ┃ ┣ 📂 utils          # Funções auxiliares de I/O (filehandler.js)
+ ┃ ┗ 📜 server.js      # Ponto de entrada e configuração do servidor Express
+ ┃
+ ┗ 📂 frontend
+   ┣ 📂 src
+   ┃ ┣ 📂 assets       # Recursos estáticos (imagens, logótipos)
+   ┃ ┣ 📂 components   # Componentes modulares e reutilizáveis (Cartões, Modais, Cabeçalho)
+   ┃ ┣ 📂 pages        # Ecrãs principais da aplicação (Busca, MeusLivros, Login, Cadastro)
+   ┃ ┣ 📂 services     # Camada de abstração para chamadas HTTP com Axios (livroService, usuarioService)
+   ┃ ┣ 📜 App.jsx      # Configuração central das rotas (React Router)
+   ┃ ┗ 📜 main.jsx     # Ponto de entrada do React
+```
+
 ## 3. Principais Decisões Técnicas
 * **Bootstrap 5 para Estilização:** Escolhido pela facilidade na criação de interfaces responsivas e, principalmente, por fornecer suporte nativo a transições de *Dark Mode* e *Light Mode* através do atributo `data-bs-theme`, reduzindo a necessidade de CSS complexo.
 * **Login Social (Google OAuth):** Implementado para melhorar a experiência do usuário (UX), permitindo um acesso rápido sem a necessidade de criar e lembrar de uma nova senha.
