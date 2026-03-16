@@ -2,7 +2,7 @@ import '../modaisConfigStyle/ModaisConfig.css';
 
 import { useState } from 'react';
 
-import { deletarConta } from '../../handleUsuarios.js';
+import { deletarConta } from '../../services/handleUsuarios.js';
 
 export default function ModalExcluirConta({ usuario, aoCancelar, aoConcluirExclusao }) {
   const [senhaConfirmacao, setSenhaConfirmacao] = useState('');

@@ -10,12 +10,12 @@ import CartaoLivro from '../../components/cardBookSearch/CartaoBusca.jsx';
 import Cabecalho from '../../components/header/Cabecalho.jsx';
 import ModalRemover
   from '../../components/modalRemoverLivro/ModalRemoverLivro.jsx';
-import { buscarLivrosApiExterna } from '../../handleAPILivros.js';
 import {
   adicionarLivro,
   listarMeusLivros,
   removerLivro,
-} from '../../handleLivros';
+} from '../../services/handleLivros.js';
+import { buscarLivrosApiExterna } from './handleAPILivros.js';
 
 export default function Busca() {
   const [pesquisa, setPesquisa] = useState('');

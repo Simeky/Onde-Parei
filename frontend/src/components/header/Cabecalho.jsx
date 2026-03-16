@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom';
 
 import logoOndeParei from '../../assets/Logo_Onde_Parei_outline.webp';
-import { buscarUsuarioPorId } from '../../handleUsuarios';
+import { buscarUsuarioPorId } from '../../services/handleUsuarios.js';
 import ModalConfig from '../modalConfig/ModalConfig.jsx';
 
 export default function Cabecalho() {
