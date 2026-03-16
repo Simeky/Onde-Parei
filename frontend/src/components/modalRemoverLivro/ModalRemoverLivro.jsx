@@ -4,8 +4,8 @@ export default function ModalRemover({ livro, aoConfirmar, aoCancelar }) {
   if (!livro) return null;
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-remover-overlay">
-      <div className="card text-light border-secondary p-4 shadow-lg modal-remover-content">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+      <div className="card text-body bg-body order-secondary p-4 shadow-lg modal-remover-content">
         <h5 className="mb-3 text-danger">Remover da Biblioteca</h5>
         <p className="small mb-4 text-secondary">
           Tem certeza que deseja remover <strong>{livro.titulo}</strong> da sua biblioteca? Você perderá as suas anotações e a página em que parou.

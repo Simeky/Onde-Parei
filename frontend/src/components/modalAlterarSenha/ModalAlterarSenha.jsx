@@ -41,8 +41,8 @@ export default function ModalAlterarSenha({ usuario, aoCancelar }) {
   };
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay-darker">
-      <div className="card text-light border-secondary p-4 shadow-lg modal-config-content modal-alterar-senha-content">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay bg-dark bg-opacity-50">
+      <div className="card text-body border-secondary p-4 shadow-lg modal-config-content modal-alterar-senha-content">
         <h5 className="mb-4 text-center">Alterar Senha</h5>
         
         {erro && <div className="alert alert-danger py-2 small">{erro}</div>}
@@ -52,7 +52,7 @@ export default function ModalAlterarSenha({ usuario, aoCancelar }) {
             <label className="small text-secondary mb-1">Nova Senha:</label>
             <input 
               type="password"
-              className="form-control text-light border-secondary modal-config-input"
+              className="form-control text-body border-secondary modal-config-input"
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
             />
@@ -61,7 +61,7 @@ export default function ModalAlterarSenha({ usuario, aoCancelar }) {
             <label className="small text-secondary mb-1">Confirmar Nova Senha:</label>
             <input 
               type="password"
-              className="form-control text-light border-secondary modal-config-input"
+              className="form-control text-body border-secondary modal-config-input"
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
             />

@@ -39,8 +39,8 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
   };
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 modal-overlay">
-      <div className="card text-light border-secondary p-0 shadow-lg position-relative modal-content-custom">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 modal-overlay ">
+      <div className="card text-body border-secondary p-0 shadow-lg position-relative modal-content-custom bg-body">
         <button 
           className="btn btn-link text-secondary position-absolute top-0 end-0 m-3 p-0 btn-close-custom" 
           onClick={aoFechar}
@@ -67,7 +67,7 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
               <div className="mb-3">
                 <label className="form-label text-secondary small mb-1">Status</label>
                 <select 
-                  className="form-select text-light border-secondary input-dark-custom" 
+                  className="form-select text-body border-secondary bg-body" 
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
@@ -81,7 +81,7 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
                 <label className="form-label text-secondary small mb-1">Página onde parei:</label>
                 <input 
                   type="number" 
-                  className="form-control text-light border-secondary input-dark-custom" 
+                  className="form-control text-body border-secondary bg-body" 
                   value={paginaAtual}
                   onChange={(e) => setPaginaAtual(e.target.value)}
                   min="0"
@@ -92,7 +92,7 @@ export default function ModalEdicaoLivro({ livro, aoSalvar, aoRemover, aoFechar 
               <div className="mb-4">
                 <label className="form-label text-secondary small mb-1">Observações:</label>
                 <textarea 
-                  className="form-control text-light border-secondary input-dark-custom" 
+                  className="form-control text-body border-secondary bg-body" 
                   rows="3"
                   placeholder="Ex: Parou no capítulo 3..."
                   value={anotacao}

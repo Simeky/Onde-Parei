@@ -8,7 +8,7 @@ export default function CartaoLivro({ livro, livroNaBiblioteca, acaoAdicionar, a
   const isAdicionado = !!livroNaBiblioteca;
 
   return (
-    <div className="card book-card h-100 bg-dark text-light border-secondary p-3">
+    <div className="card book-card h-100 bg-body text-body border-secondary p-3">
       <img
         src={livro.capa ? livro.capa : capaPadrao}
         className="card-img-top book-cover rounded"

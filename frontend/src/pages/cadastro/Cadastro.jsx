@@ -74,8 +74,8 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-light">
-      <div className="card bg-dark text-light border-secondary p-4 shadow-lg cadastro-card">
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-body text-body">
+      <div className="card bg-body border-secondary p-4 shadow-lg cadastro-card">
         <h2 className="text-center h4 mb-4">Cadastro</h2>
         
         {erro && <div className="alert alert-danger py-2">{erro}</div>}
@@ -85,7 +85,7 @@ export default function Cadastro() {
             <label className="form-label text-secondary small mb-1">Email:</label>
             <input 
               type="email" 
-              className="form-control bg-dark text-light border-secondary" 
+              className="form-control bg-body text-body border-secondary" 
               placeholder="coruja@leitora.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -98,14 +98,14 @@ export default function Cadastro() {
             <div className="input-group">
               <input 
                 type={mostrarSenha ? "text" : "password"} 
-                className="form-control bg-dark text-light border-secondary border-end-0" 
+                className="form-control bg-body text-body border-secondary border-end-0" 
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required 
               />
               <button 
                 type="button" 
-                className="btn btn-outline-secondary bg-dark text-light border-secondary border-start-0" 
+                className="btn btn-outline-secondary bg-body text-body border-secondary border-start-0" 
                 onClick={() => setMostrarSenha(!mostrarSenha)}
               >
                 {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
@@ -118,14 +118,14 @@ export default function Cadastro() {
             <div className="input-group">
               <input 
                 type={mostrarConfirmarSenha ? "text" : "password"} 
-                className="form-control bg-dark text-light border-secondary border-end-0" 
+                className="form-control bg-body text-body border-secondary border-end-0" 
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 required 
               />
               <button 
                 type="button" 
-                className="btn btn-outline-secondary bg-dark text-light border-secondary border-start-0" 
+                className="btn btn-outline-secondary bg-body text-body border-secondary border-start-0" 
                 onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
               >
                 {mostrarConfirmarSenha ? <FaEyeSlash /> : <FaEye />}
@@ -154,7 +154,7 @@ export default function Cadastro() {
               onSuccess={lidarComLoginGoogle}
               onError={() => setErro('Falha ao conectar com o Google.')}
               useOneTap={false}
-              theme="filled_black"
+              theme="outline"
               shape="pill"
             />
           </div>

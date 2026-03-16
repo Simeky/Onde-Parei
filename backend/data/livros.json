@@ -306,5 +306,33 @@
     "status": "Para ler",
     "paginaAtual": 0,
     "anotacao": ""
+  },
+  {
+    "id": "1773629128302",
+    "usuario_id": "1773611094006",
+    "id_api": "hEeDFD3KItgC",
+    "titulo": "The Dragon Ball Z Legend",
+    "autor": "DH Publishing",
+    "capa": "https://books.google.com/books/content?id=hEeDFD3KItgC&printsec=frontcover&img=1&zoom=0&source=gbs_api",
+    "paginas": 190,
+    "ano": "2004-05",
+    "categoria": "Juvenile Nonfiction",
+    "status": "Para ler",
+    "paginaAtual": 0,
+    "anotacao": ""
+  },
+  {
+    "id": "1773629197924",
+    "usuario_id": "1773611094006",
+    "id_api": "oNWCEQAAQBAJ",
+    "titulo": "Dragon Ball",
+    "autor": "Miles Herman",
+    "capa": "https://books.google.com/books/content?id=oNWCEQAAQBAJ&printsec=frontcover&img=1&zoom=0&source=gbs_api",
+    "paginas": 115,
+    "ano": "2025-12-15",
+    "categoria": "Juvenile Nonfiction",
+    "status": "Para ler",
+    "paginaAtual": 0,
+    "anotacao": ""
   }
 ]

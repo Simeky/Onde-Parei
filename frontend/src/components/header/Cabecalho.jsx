@@ -50,15 +50,15 @@ export default function Cabecalho() {
 
   return (
     <>
-      <nav className="navbar navbar-dark bg-dark border-bottom border-secondary px-4 py-2">
+      <nav className="navbar navbar-dark bg-body border-bottom border-secondary px-4 py-2">
         <div className="d-flex align-items-center">
           <img src={logoOndeParei} alt="Logo" width="40" className="me-3" />
           
           <div className="d-flex gap-4 ms-3">
-            <Link to="/busca" className={`text-decoration-none ${localizacao.pathname === '/busca' ? 'text-light fw-bold' : 'text-secondary'}`}>
+            <Link to="/busca" className={`text-decoration-none ${localizacao.pathname === '/busca' ? 'text-body fw-bold' : 'text-secondary'}`}>
               Livros
             </Link>
-            <Link to="/meus-livros" className={`text-decoration-none ${localizacao.pathname === '/meus-livros' ? 'text-light fw-bold' : 'text-secondary'}`}>
+            <Link to="/meus-livros" className={`text-decoration-none ${localizacao.pathname === '/meus-livros' ? 'text-body fw-bold' : 'text-secondary'}`}>
               Meus Livros
             </Link>
           </div>

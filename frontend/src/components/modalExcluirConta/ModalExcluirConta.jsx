@@ -26,8 +26,8 @@ export default function ModalExcluirConta({ usuario, aoCancelar, aoConcluirExclu
   };
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay-darker">
-      <div className="card text-light border-secondary p-4 shadow-lg modal-config-content">
+    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center modal-config-overlay bg-dark bg-opacity-50">
+      <div className="card text-body bg-body border-secondary p-4 shadow-lg modal-config-content">
         <h5 className="text-danger mb-3">Excluir Conta</h5>
         <p className="small mb-4 text-secondary">
           Tem certeza? Essa ação apagará todos os seus livros e é <strong>irreversível</strong>.
@@ -38,11 +38,11 @@ export default function ModalExcluirConta({ usuario, aoCancelar, aoConcluirExclu
         <div className="mb-4">
           <label className="small text-secondary mb-1">
             Para segurança, digite <br/>
-            <strong className="text-light">{usuario.provider === 'local' ? 'sua senha' : usuario.email}</strong> abaixo:
+            <strong className="text-body">{usuario.provider === 'local' ? 'sua senha' : usuario.email}</strong> abaixo:
           </label>
           <input 
             type={usuario.provider === 'local' ? "password" : "email"}
-            className="form-control text-light border-secondary modal-config-input"
+            className="form-control text-body border-secondary modal-config-input"
             placeholder={usuario.provider === 'local' ? "Sua senha" : "seu-email@gmail.com"}
             value={senhaConfirmacao}
             onChange={(e) => setSenhaConfirmacao(e.target.value)}

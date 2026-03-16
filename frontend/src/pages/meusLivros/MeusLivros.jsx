@@ -99,7 +99,7 @@ export default function Biblioteca() {
   const livrosPaginados = livrosFiltrados.slice(startIndex, startIndex + ITENS_POR_PAGINA);
 
   return (
-    <div className="bg-dark text-light min-vh-100 pb-5">
+    <div className="bg-body text-light min-vh-100 pb-5">
       <Cabecalho />
       
       <main className="container mt-5">
@@ -107,7 +107,7 @@ export default function Biblioteca() {
           <h2 className="m-0 text-light fw-bold">Meus Livros</h2>
           
           <select 
-            className="form-select text-light border-secondary shadow-sm filtro-dropdown" 
+            className="form-select text-body border-secondary shadow-sm filtro-dropdown bg-body" 
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
           >
@@ -159,7 +159,7 @@ export default function Biblioteca() {
                   Anterior
                 </button>
                 
-                <span className="text-light fw-bold bg-dark border border-secondary rounded-pill px-4 py-2 shadow-sm">
+                <span className="text-light fw-bold bg-body border border-secondary rounded-pill px-4 py-2 shadow-sm">
                   Página {paginaAtual} de {totalPaginas}
                 </span>
                 

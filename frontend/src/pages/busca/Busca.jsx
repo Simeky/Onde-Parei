@@ -106,7 +106,7 @@ export default function Busca() {
   };
 
   return (
-    <div className="bg-dark text-light min-vh-100 pb-5">
+    <div className="bg-body text-body min-vh-100 pb-5">
       <Cabecalho />
       
       <main className="container mt-5">
@@ -114,7 +114,7 @@ export default function Busca() {
           <div className="input-group shadow-sm busca-input-container">
             <input 
               type="text" 
-              className="form-control bg-dark text-light border-secondary" 
+              className="form-control bg-body text-body border-secondary" 
               placeholder="Pesquisar por Título ou Autor..." 
               value={pesquisa}
               onChange={(e) => setPesquisa(e.target.value)}
@@ -167,7 +167,7 @@ export default function Busca() {
                 Anterior
               </button>
               
-              <span className="text-light fw-bold bg-dark border border-secondary rounded-pill px-4 py-2 shadow-sm">
+              <span className="text-body fw-bold bg-body border border-secondary rounded-pill px-4 py-2 shadow-sm">
                 Página {paginaAtual}
               </span>
               

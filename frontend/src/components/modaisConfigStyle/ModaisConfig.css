@@ -1,23 +1,8 @@
 .modal-config-overlay {
-    background-color: rgba(0, 0, 0, 0.7);
     z-index: 1050;
 }
 
-.modal-config-overlay-darker {
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1060;
-}
-
 .modal-config-content {
-    background-color: #212529;
     border-radius: 12px;
     width: 400px;
-}
-
-.modal-config-input {
-    background-color: #1a1d20 !important;
-}
-
-.modal-config-theme-box {
-    background-color: #1a1d20;
 }

@@ -14,7 +14,7 @@ export default function CartaoMeusLivros({ livro, aoClicar }) {
 
   return (
     <div 
-      className="card book-card h-100 bg-dark text-light border-secondary position-relative p-3" 
+      className="card book-card h-100 bg-body text-body border-secondary position-relative p-3" 
       onClick={() => aoClicar(livro)}
     >
       <span 
