@@ -6,7 +6,7 @@ import {
 } from 'react';
 
 import logoOutline from '../../assets/Logo_Onde_Parei_outline.webp';
-import CartaoBiblioteca
+import CartaoMeusLivros
   from '../../components/cardBookMeusLivros/CartaoMeusLivros.jsx';
 import Cabecalho from '../../components/header/Cabecalho.jsx';
 import ModalEdicaoLivro
@@ -19,7 +19,7 @@ import {
   removerLivro,
 } from '../../services/handleLivros.js';
 
-export default function Biblioteca() {
+export default function MeusLivros() {
   const [livros, setLivros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
   const [carregando, setCarregando] = useState(true);
@@ -31,14 +31,14 @@ export default function Biblioteca() {
   const ITENS_POR_PAGINA = 8;
 
   useEffect(() => {
-    carregarBiblioteca();
+    carregarMeusLivros();
   }, []);
 
   useEffect(() => {
     setPaginaAtual(1);
   }, [filtro]);
 
-  const carregarBiblioteca = async () => {
+  const carregarMeusLivros = async () => {
     setCarregando(true);
     try {
       const usuarioId = localStorage.getItem('usuarioId');
@@ -47,7 +47,7 @@ export default function Biblioteca() {
         setLivros(dados.reverse());
       }
     } catch (error) {
-      console.error("Erro ao carregar a biblioteca", error);
+      console.error("Erro ao carregar a MeusLivros", error);
     } finally {
       setCarregando(false);
     }
@@ -129,7 +129,7 @@ export default function Biblioteca() {
             <p className="mb-4 fs-5">
                {filtro === 'Todos' ? 'Sua estante está vazia.' : `Nenhum livro com status "${filtro}".`}
             </p>
-            <img src={logoOutline} alt="Estante vazia" className="imagem-vazia-biblioteca" />
+            <img src={logoOutline} alt="Estante vazia" className="imagem-vazia-MeusLivros" />
           </div>
         )}
 
@@ -138,7 +138,7 @@ export default function Biblioteca() {
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
               {livrosPaginados.map((livro) => (
                 <div className="col" key={livro.id}>
-                  <CartaoBiblioteca 
+                  <CartaoMeusLivros 
                     livro={livro} 
                     aoClicar={setLivroSendoEditado} 
                   />
