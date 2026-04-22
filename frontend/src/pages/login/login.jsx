@@ -1,3 +1,5 @@
+import './Login.css';
+
 import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
@@ -15,7 +17,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import {
   fazerLogin,
   loginComGoogle,
-} from '../../handleUsuarios';
+} from '../../services/handleUsuarios.js';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -24,7 +26,6 @@ export default function Login() {
   const [erro, setErro] = useState('');
   const navegar = useNavigate();
 
-  // Login tradicional
   const lidarComSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -41,32 +42,30 @@ export default function Login() {
       const dadosDecodificados = jwtDecode(credencialResponse.credential);
       
       const resposta = await loginComGoogle({ 
-        email: dadosDecodificados.email, 
-        nome: dadosDecodificados.name 
+        email: dadosDecodificados.email
       });
 
       localStorage.setItem('usuarioId', resposta.usuario.id);
       navegar('/busca');
-      
     } catch {
       setErro('Erro ao autenticar com o servidor do Google.');
     }
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-light">
-      <div className="card bg-dark text-light border-secondary p-4 shadow-lg" style={{ width: '400px', borderRadius: '12px' }}>
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-body text-body">
+      <div className="card bg-body border-secondary p-4 shadow-lg login-card">
         <h2 className="text-center h4 mb-4">Login</h2>
         
         {erro && <div className="alert alert-danger py-2">{erro}</div>}
         
         <form onSubmit={lidarComSubmit}>
           <div className="mb-3">
-            <label className="form-label text-secondary small mb-1">Nome de usuário ou Email</label>
+            <label className="form-label text-secondary small mb-1">Email</label>
             <input 
               type="email" 
-              className="form-control bg-dark text-light border-secondary" 
-              placeholder="Coruja leitora"
+              className="form-control bg-body text-body border-secondary" 
+              placeholder="coruja@leitora.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required 
@@ -78,7 +77,7 @@ export default function Login() {
             <div className="input-group">
               <input 
                 type={mostrarSenha ? "text" : "password"} 
-                className="form-control bg-dark text-light border-secondary border-end-0" 
+                className="form-control bg-body border-secondary border-end-0" 
                 placeholder="***************"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -86,7 +85,7 @@ export default function Login() {
               />
               <button 
                 type="button" 
-                className="btn btn-outline-secondary bg-dark text-light border-secondary border-start-0"
+                className="btn btn-outline-secondary bg-body text-body border-secondary border-start-0"
                 onClick={() => setMostrarSenha(!mostrarSenha)}
               >
                 {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
@@ -107,7 +106,6 @@ export default function Login() {
               onSuccess={lidarComLoginGoogle}
               onError={() => setErro('Falha ao conectar com o Google.')}
               useOneTap={false}
-              theme="filled_black"
               shape="pill"
             />
           </div>

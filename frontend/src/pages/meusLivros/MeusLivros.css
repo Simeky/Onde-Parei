@@ -1,0 +1,10 @@
+.filtro-dropdown {
+    width: auto;
+    min-width: 150px;
+}
+
+.imagem-vazia-biblioteca {
+    width: 350px;
+    opacity: 0.15;
+    filter: grayscale(100%);
+}

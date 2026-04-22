@@ -3,7 +3,7 @@ const router = express.Router();
 const { lerDados, salvarDados } = require('../utils/filehandler.js');
 
 router.post('/cadastrar_livro', (req, res) => {
-  const { usuario_id, id_api, titulo, autor, capa, ano, status, paginaAtual, anotacao } = req.body;
+  const { usuario_id, id_api, titulo, autor, capa, ano, status, paginaAtual, anotacao, paginas, categoria } = req.body;
   if (!usuario_id) return res.status(400).json({ erro: 'O ID do usuário é obrigatório.' });
 
   const livros = lerDados('livros');
@@ -11,8 +11,10 @@ router.post('/cadastrar_livro', (req, res) => {
     id: Date.now().toString(),
     usuario_id, 
     id_api, titulo, autor, capa,
-    ano, // opcional
-    status: status || 'Para Ler',
+    paginas: paginas || 0,
+    ano: ano || 'N/A',
+    categoria: categoria || 'N/A',
+    status: status || 'Para ler',
     paginaAtual: paginaAtual || 0,
     anotacao: anotacao || ''
   };

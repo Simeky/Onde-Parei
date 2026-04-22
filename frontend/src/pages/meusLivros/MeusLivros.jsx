@@ -1,126 +1,179 @@
-import { useState, useEffect } from 'react';
+import './MeusLivros.css';
 
+import {
+  useEffect,
+  useState,
+} from 'react';
+
+import logoOutline from '../../assets/Logo_Onde_Parei_outline.webp';
+import CartaoMeusLivros
+  from '../../components/cardBookMeusLivros/CartaoMeusLivros.jsx';
 import Cabecalho from '../../components/header/Cabecalho.jsx';
-import CartaoLivro from '../../components/cardBookSearch/CartaoBusca.jsx';
-import { listarMeusLivros, removerLivro } from '../../handleLivros.js';
-import { buscarDetalhesLivro } from '../../handleAPILivros.js';
+import ModalEdicaoLivro
+  from '../../components/modalMeusLivros/ModalMeusLivros.jsx';
+import ModalRemover
+  from '../../components/modalRemoverLivro/ModalRemoverLivro.jsx';
+import { listarMeusLivros } from '../../services/handleLivros.js';
 
 export default function MeusLivros() {
-    const [livros, setLivros] = useState([]);
-    const [carregando, setCarregando] = useState(false);
+  const [livros, setLivros] = useState([]);
+  const [filtro, setFiltro] = useState('Todos');
+  const [carregando, setCarregando] = useState(true);
+  
+  const [livroSendoEditado, setLivroSendoEditado] = useState(null);
+  const [livroParaRemover, setLivroParaRemover] = useState(null);
 
-    // detalhes/descrição exibidos ao clicar
-    const [livroSelecionado, setLivroSelecionado] = useState(null);
-    const [detalhes, setDetalhes] = useState(null);
-    const [carregandoDetalhes, setCarregandoDetalhes] = useState(false);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const ITENS_POR_PAGINA = 8;
 
-    useEffect(() => {
-        const usuarioId = localStorage.getItem('usuarioId');
-        if (!usuarioId) return;
+  useEffect(() => {
+    carregarMeusLivros();
+  }, []);
 
-        setCarregando(true);
-        listarMeusLivros(usuarioId)
-            .then((dados) => setLivros(dados))
-            .catch(() => {
-                alert('Erro ao carregar seus livros.');
-            })
-            .finally(() => setCarregando(false));
-    }, []);
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [filtro]);
 
-    const lidarRemover = async (livro) => {
-        if (!window.confirm(`Remover "${livro.titulo}" da sua biblioteca?`)) return;
-        try {
-            await removerLivro(livro.id);
-            setLivros(livros.filter((l) => l.id !== livro.id));
-        } catch {
-            alert('Não foi possível remover o livro.');
-        }
-    };
+  const carregarMeusLivros = async () => {
+    setCarregando(true);
+    try {
+      const usuarioId = localStorage.getItem('usuarioId');
+      if (usuarioId) {
+        const dados = await listarMeusLivros(usuarioId);
+        setLivros(dados.reverse());
+      }
+    } catch (error) {
+      console.error("Erro ao carregar a MeusLivros", error);
+    } finally {
+      setCarregando(false);
+    }
+  };
 
-    const lidarClique = async (livro) => {
-        setLivroSelecionado(livro);
-        setDetalhes(null);
-        if (livro.id_api) {
-            setCarregandoDetalhes(true);
-            const d = await buscarDetalhesLivro(livro.id_api);
-            setDetalhes(d);
-            setCarregandoDetalhes(false);
-        }
-    };
+  const concluirEdicao = (livroAtualizado) => {
+    setLivros(livros.map(l => l.id === livroAtualizado.id ? livroAtualizado : l));
+    setLivroSendoEditado(null); 
+  };
 
-    const fecharModal = () => {
-        setLivroSelecionado(null);
-        setDetalhes(null);
-    };
+  const concluirRemocao = (idRemovido) => {
+    setLivros(livros.filter(l => l.id !== idRemovido));
+    setLivroParaRemover(null); 
+    setLivroSendoEditado(null); 
+    
+    if (livrosPaginados.length === 1 && paginaAtual > 1) {
+      setPaginaAtual(paginaAtual - 1);
+    }
+  };
 
-    return (
-        <div className="bg-dark text-light min-vh-100 pb-5">
-            <Cabecalho />
-            <main className="container mt-4">
-                <h1>Meus Livros</h1>
+  const prepararRemocao = (livro) => {
+    setLivroSendoEditado(null); 
+    setLivroParaRemover(livro); 
+  };
 
-                {carregando && (
-                    <div className="text-center mt-5">
-                        <div className="spinner-border text-primary" role="status"></div>
-                        <p className="mt-2 text-secondary">Carregando sua biblioteca...</p>
-                    </div>
-                )}
+  const livrosFiltrados = livros.filter(livro => {
+    if (filtro === 'Todos') return true;
+    return livro.status === filtro;
+  });
 
-                {!carregando && livros.length === 0 && (
-                    <p className="text-secondary mt-4">
-                        Você ainda não adicionou nenhum livro. Visite a página de busca para começar!
-                    </p>
-                )}
+  const totalPaginas = Math.ceil(livrosFiltrados.length / ITENS_POR_PAGINA);
+  const startIndex = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const livrosPaginados = livrosFiltrados.slice(startIndex, startIndex + ITENS_POR_PAGINA);
 
-                {!carregando && livros.length > 0 && (
-                    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-                        {livros.map((livro) => (
-                            <div className="col" key={livro.id}>
-                                <CartaoLivro
-                                  livro={livro}
-                                  acaoRemover={lidarRemover}
-                                  onClick={() => lidarClique(livro)}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </main>
-
-            {/* modal de detalhes */}
-            {livroSelecionado && (
-                <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                     style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1050 }}
-                     onClick={fecharModal}>
-                    <div className="card bg-dark text-light border-secondary p-4" style={{ maxWidth: '500px', width: '90%' }} onClick={e => e.stopPropagation()}>
-                        <button className="btn-close btn-close-white float-end" onClick={fecharModal}></button>
-                        {livroSelecionado.capa && (
-                            <div className="text-center mb-3">
-                                <img
-                                    src={livroSelecionado.capa}
-                                    alt={`Capa de ${livroSelecionado.titulo}`}
-                                    style={{ maxHeight: '200px', borderRadius: '8px' }}
-                                />
-                            </div>
-                        )}
-                        <h5 className="mb-3">{livroSelecionado.titulo}</h5>
-                        <p className="mb-1"><strong>Autor:</strong> {livroSelecionado.autor}</p>
-                        <p className="mb-1"><strong>Ano:</strong> {livroSelecionado.ano || (detalhes && detalhes.first_publish_date) || 'N/A'}</p>
-                        {carregandoDetalhes && <p>Carregando detalhes...</p>}
-                        {!carregandoDetalhes && detalhes && detalhes.description && (
-                            <div className="mt-3">
-                                <strong>Descrição:</strong>
-                                <p className="small mt-1">
-                                    {typeof detalhes.description === 'string'
-                                        ? detalhes.description
-                                        : detalhes.description.value}
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
+  return (
+    <div className="bg-body text-light min-vh-100 pb-5">
+      <Cabecalho />
+      
+      <main className="container mt-5">
+        <div className="d-flex justify-content-between align-items-end mb-4 border-bottom border-secondary pb-3">
+          <h2 className="m-0 text-light fw-bold">Meus Livros</h2>
+          
+          <select 
+            className="form-select text-body border-secondary shadow-sm filtro-dropdown bg-body" 
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          >
+            <option value="Todos">Todos</option>
+            <option value="Para ler">Para ler</option>
+            <option value="Lendo">Lendo</option>
+            <option value="Lido">Lido</option>
+          </select>
         </div>
-    );
+
+        {carregando && (
+          <div className="text-center mt-5">
+            <div className="spinner-border text-primary" role="status"></div>
+          </div>
+        )}
+
+        {!carregando && livrosFiltrados.length === 0 && (
+          <div className="text-center mt-5 pt-4 text-secondary d-flex flex-column align-items-center">
+            <p className="mb-4 fs-5">
+               {filtro === 'Todos' ? 'Sua estante está vazia.' : `Nenhum livro com status "${filtro}".`}
+            </p>
+            <img src={logoOutline} alt="Estante vazia" className="imagem-vazia-MeusLivros" />
+          </div>
+        )}
+
+        {!carregando && livrosFiltrados.length > 0 && (
+          <>
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+              {livrosPaginados.map((livro) => (
+                <div className="col" key={livro.id}>
+                  <CartaoMeusLivros 
+                    livro={livro} 
+                    aoClicar={setLivroSendoEditado} 
+                  />
+                </div>
+              ))}
+            </div>
+
+            {totalPaginas > 1 && (
+              <div className="d-flex justify-content-center align-items-center mt-5 gap-3 pt-3 border-top border-secondary">
+                <button 
+                  className="btn btn-outline-secondary rounded-pill px-4 fw-bold"
+                  onClick={() => {
+                    setPaginaAtual(paginaAtual - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={paginaAtual === 1}
+                >
+                  Anterior
+                </button>
+                
+                <span className="text-light fw-bold bg-body border border-secondary rounded-pill px-4 py-2 shadow-sm">
+                  Página {paginaAtual} de {totalPaginas}
+                </span>
+                
+                <button 
+                  className="btn btn-outline-primary rounded-pill px-4 fw-bold"
+                  onClick={() => {
+                    setPaginaAtual(paginaAtual + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={paginaAtual === totalPaginas}
+                >
+                  Próxima
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      {livroSendoEditado && (
+        <ModalEdicaoLivro 
+          key={livroSendoEditado.id} 
+          livro={livroSendoEditado}
+          aoConcluirEdicao={concluirEdicao}
+          aoRemover={prepararRemocao}
+          aoFechar={() => setLivroSendoEditado(null)}
+        />
+      )}
+
+      <ModalRemover 
+        livro={livroParaRemover}
+        aoConcluirRemocao={concluirRemocao}
+        aoCancelar={() => setLivroParaRemover(null)}
+      />
+    </div>
+  );
 }
