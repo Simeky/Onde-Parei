@@ -11,7 +11,7 @@ import BemVindo from './pages/bemVindo/BemVindo.jsx';
 import Busca from './pages/busca/Busca.jsx';
 import Cadastro from './pages/cadastro/Cadastro.jsx';
 import Login from './pages/login/login.jsx';
-import MeusLivros from './pages/meusLivros/meusLivros.jsx';
+import MeusLivros from './pages/meusLivros/MeusLivros.jsx';
 
 function App() {
   useEffect(() => {
