@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/livros'
+  baseURL: 'http://15.228.202.17.nip.io:5000/livros'
 });
 
 export const listarMeusLivros = async (usuarioId) => {
