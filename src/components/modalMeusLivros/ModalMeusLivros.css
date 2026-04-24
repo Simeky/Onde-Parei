@@ -1,0 +1,22 @@
+.modal-overlay {
+    z-index: 1050;
+}
+
+.modal-content-custom {
+    width: 800px;
+    max-width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+.btn-close-custom {
+    z-index: 1060;
+}
+
+#modalBookCover {
+    width: 100%;
+    height: auto;       
+    max-height: 400px; 
+    object-fit: contain; 
+}

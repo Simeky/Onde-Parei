@@ -1,0 +1,16 @@
+.btn-configuracao {
+    transition: opacity 0.3s;
+}
+
+.btn-configuracao:hover .icone-engrenagem {
+    animation: girar 2s linear infinite;
+}
+
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
