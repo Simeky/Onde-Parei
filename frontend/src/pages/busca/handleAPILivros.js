@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const google_api_key = 'AIzaSyCB_j7-o4_jMjq7uvdnFYHvZBMDyrlVFV0';
+const google_api_key = 'AIzaSyAQoJ7M8dWLQkKoJmrkbxKsDxWJf9TasAI';
 const apiGoogleBooks = axios.create({
   baseURL: 'https://www.googleapis.com/books/v1'
 });
