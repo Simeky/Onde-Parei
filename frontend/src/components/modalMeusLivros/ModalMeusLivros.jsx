@@ -7,9 +7,14 @@ import { FaTimes } from 'react-icons/fa';
 import { atualizarLivro } from '../../services/handleLivros.js';
 
 export default function ModalEdicaoLivro({ livro, aoConcluirEdicao, aoRemover, aoFechar }) {
+  const normalizarStatus = (status) => {
+    if (!status) return 'Para ler';
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  };
+
   const [paginaAtual, setPaginaAtual] = useState(livro?.paginaAtual || 0);
   const [anotacao, setAnotacao] = useState(livro?.anotacao || '');
-  const [status, setStatus] = useState(livro?.status || 'Para ler');
+  const [status, setStatus] = useState(normalizarStatus(livro?.status));
   const [carregando, setCarregando] = useState(false);
 
   if (!livro) return null;

@@ -3,8 +3,14 @@ import './CartaoMeusLivros.css'; // Importando o CSS modular do componente
 import capaPadrao from '../../assets/Logo_Onde_Parei_outline.webp';
 
 export default function CartaoMeusLivros({ livro, aoClicar }) {
+  const normalizarStatus = (status) => {
+    if (!status) return 'Para ler';
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  };
+
   const obterCorBadge = (status) => {
-    switch (status) {
+    const statusNormalizado = normalizarStatus(status);
+    switch (statusNormalizado) {
       case 'Lendo': return 'bg-warning text-dark';
       case 'Lido': return 'bg-success text-white';
       case 'Para ler':
@@ -20,7 +26,7 @@ export default function CartaoMeusLivros({ livro, aoClicar }) {
       <span 
         className={`badge ${obterCorBadge(livro.status)} badge-status position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm`}
       >
-        {livro.status}
+        {normalizarStatus(livro.status)}
       </span>
 
       <img 
