@@ -50,12 +50,12 @@ export default function MeusLivros() {
   };
 
   const concluirEdicao = (livroAtualizado) => {
-    setLivros(livros.map(l => l.id === livroAtualizado.id ? livroAtualizado : l));
+    setLivros(livros.map(l => l.progressoId === livroAtualizado.progressoId ? livroAtualizado : l));
     setLivroSendoEditado(null); 
   };
 
   const concluirRemocao = (idRemovido) => {
-    setLivros(livros.filter(l => l.id !== idRemovido));
+    setLivros(livros.filter(l => l.progressoId !== idRemovido));
     setLivroParaRemover(null); 
     setLivroSendoEditado(null); 
     
