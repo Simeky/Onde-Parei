@@ -27,22 +27,11 @@ export default function ModalEdicaoLivro({ livro, aoConcluirEdicao, aoRemover, a
       return;
     }
 
-    let novoStatus = status;
-    if (novoPaginaAtual > 0 && status === 'Para ler') {
-      novoStatus = 'Lendo';
-    }
-    if (novoPaginaAtual === 0 && status === 'Lendo') {
-      novoStatus = 'Para ler';
-    }
-    if (totalPaginas > 0 && novoPaginaAtual === totalPaginas) {
-      novoStatus = 'Lido';
-    }
-
     setCarregando(true);
     try {
-      await atualizarLivro(livro.progressoId, { paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+      const resposta = await atualizarLivro(livro.progressoId, { paginaAtual: novoPaginaAtual, anotacao });
       
-      aoConcluirEdicao({ ...livro, paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+      aoConcluirEdicao(resposta.livro);
     } catch {
       alert("Erro ao salvar progresso.");
       setCarregando(false);
