@@ -40,7 +40,7 @@ export default function ModalEdicaoLivro({ livro, aoConcluirEdicao, aoRemover, a
 
     setCarregando(true);
     try {
-      await atualizarLivro(livro.id, { paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
+      await atualizarLivro(livro.progressoId, { paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
       
       aoConcluirEdicao({ ...livro, paginaAtual: novoPaginaAtual, anotacao, status: novoStatus });
     } catch {

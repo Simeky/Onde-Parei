@@ -13,8 +13,8 @@ export default function ModalRemover({ livro, aoConcluirRemocao, aoCancelar }) {
   const Confirmacao = async () => {
     setCarregando(true);
     try {
-      await removerLivro(livro.id);
-      aoConcluirRemocao(livro.id);
+      await removerLivro(livro.progressoId);
+      aoConcluirRemocao(livro.progressoId);
     } 
     catch {
       setErro("Erro ao remover o livro.");
