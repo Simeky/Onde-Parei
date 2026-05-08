@@ -12,9 +12,8 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
 ```
 📦 Onde-Parei
  ┣ 📂 backend
- ┃ ┣ 📂 data           # Ficheiros JSON para persistência (usuarios.json, livros.json)
+ ┃ ┣ 📂 config         # Configuração de conexão com Banco de Dados MySQL na AWS
  ┃ ┣ 📂 routes         # Endpoints da API (livros.routes.js, usuarios.routes.js)
- ┃ ┣ 📂 utils          # Funções auxiliares de I/O (filehandler.js)
  ┃ ┗ 📜 server.js      # Ponto de entrada e configuração do servidor Express
  ┃
  ┗ 📂 frontend
@@ -30,7 +29,7 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
 ## 3. Principais Decisões Técnicas
 * **Bootstrap 5 para Estilização:** Escolhido pela facilidade na criação de interfaces responsivas e, principalmente, por fornecer suporte nativo a transições de *Dark Mode* e *Light Mode* através do atributo `data-bs-theme`, reduzindo a necessidade de CSS complexo.
 * **Login Social (Google OAuth):** Implementado para melhorar a experiência do usuário (UX), permitindo um acesso rápido sem a necessidade de criar e lembrar de uma nova senha.
-* **Persistência em Arquivos JSON:** Como estratégia para simplificar o ambiente de desenvolvimento e facilitar a execução do projeto em qualquer máquina, o banco de dados foi simulado utilizando o *File System* do Node (`fs`), lendo e escrevendo em arquivos `.json` ao invés de exigir a instalação de um SGBD pesado (como MySQL ou Postgres).
+* **Banco de Dados Relacional (MySQL via AWS):** A persistência dos dados foi migrada para um banco de dados MySQL, hospedado na nuvem (AWS). A conexão e manipulação dos dados ocorrem através da biblioteca `mysql2`, utilizando pool de conexões para escalabilidade, desempenho e maior segurança.
 * **Componentização Modular:** O frontend foi estruturado separando Modais, Cartões (Cards) e o Cabeçalho (Header) em componentes independentes, facilitando a manutenção e a reutilização do código.
 
 ## 4. Instalação de Dependências e Execução
