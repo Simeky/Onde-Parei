@@ -1,18 +1,32 @@
 import './CartaoBusca.css';
 
+import {
+  useEffect,
+  useState,
+} from 'react';
 import { FaCheck } from 'react-icons/fa';
 
 import capaPadrao from '../../assets/Logo_Onde_Parei_outline.webp';
 
 export default function CartaoLivro({ livro, livroNaBiblioteca, acaoAdicionar, acaoRemover }) {
   const isAdicionado = !!livroNaBiblioteca;
+  const [capaSrc, setCapaSrc] = useState(() => livro.capa || capaPadrao);
+
+  useEffect(() => {
+    setCapaSrc(livro.capa || capaPadrao);
+  }, [livro.id_api, livro.capa]);
+
+  const lidarErroCapa = () => {
+    setCapaSrc((atual) => (atual === capaPadrao ? atual : capaPadrao));
+  };
 
   return (
     <div className="card book-card h-100 bg-body text-body border-secondary p-3">
       <img
-        src={livro.capa ? livro.capa : capaPadrao}
+        src={capaSrc}
         className="card-img-top book-cover rounded"
         alt={`Capa do livro ${livro.titulo}`}
+        onError={lidarErroCapa}
       />
 
       <div className="card-body px-0 pb-0 d-flex flex-column">

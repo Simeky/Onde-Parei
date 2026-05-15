@@ -9,6 +9,34 @@ const apiGoogleBooks = axios.create({
 const cacheResultados = new Map();
 const TEMPO_CACHE = 1000 * 60 * 30; // 30 minutos
 
+const ESCOPOS_VALIDOS = new Set(['geral', 'autor', 'titulo']);
+
+/**
+ * @param {string} termoBruto
+ * @returns {string}
+ */
+const sanitizarTermoBusca = (termoBruto) => {
+  if (!termoBruto) return '';
+  return termoBruto
+    .trim()
+    .replace(/"/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+/**
+ * Monta o parâmetro `q` da Google Books (frase entre aspas; opcionalmente inauthor/intitle).
+ * @param {string} termoSanitizado
+ * @param {'geral'|'autor'|'titulo'} escopo
+ * @returns {string}
+ */
+const montarQueryBusca = (termoSanitizado, escopo) => {
+  const comAspas = `"${termoSanitizado}"`;
+  if (escopo === 'autor') return `inauthor:${comAspas}`;
+  if (escopo === 'titulo') return `intitle:${comAspas}`;
+  return comAspas;
+};
+
 /**
  * Normaliza e valida a URL da capa do livro
  * @param {Object} imageLinks - Objeto contendo as URLs das imagens
@@ -31,6 +59,7 @@ const normalizarCapaUrl = (imageLinks) => {
 
 /**
  * Valida se um livro possui informações essenciais de qualidade
+ * (título, autor, capa, ISBN e número de páginas para uso no app).
  * @param {Object} livro - Objeto do livro da API
  * @returns {boolean} - True se o livro possui dados de qualidade
  */
@@ -41,10 +70,13 @@ const ehLivroDeQualidade = (livro) => {
   const temTitulo = info.title && info.title.trim().length > 0;
   const temAutor = info.authors && info.authors.length > 0;
   const temCapa = info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail;
+  const ids = info.industryIdentifiers || [];
+  const temIsbn = ids.some(
+    (id) => id.type === 'ISBN_10' || id.type === 'ISBN_13'
+  );
+  const temPaginas = Number(info.pageCount) > 0;
   
-  
-  // Rejeitar livros sem pelo menos título, autor e capa
-  return temTitulo && temAutor && temCapa;
+  return temTitulo && temAutor && temCapa && temIsbn && temPaginas;
 };
 
 /**
@@ -84,18 +116,22 @@ const formatarLivro = (livro) => {
  * Busca livros na API do Google Books com parâmetros otimizados
  * @param {string} termo - Termo de busca
  * @param {number} startIndex - Índice inicial para paginação
+ * @param {'geral'|'autor'|'titulo'} [escopo='geral'] - Escopo da query (frase geral, inauthor ou intitle)
  * @returns {Promise<Array>} - Array de livros formatados
  */
-export const buscarLivrosApiExterna = async (termo, startIndex = 0) => {
+export const buscarLivrosApiExterna = async (termo, startIndex = 0, escopo = 'geral') => {
+  const escopoNormalizado = ESCOPOS_VALIDOS.has(escopo) ? escopo : 'geral';
+  const termoSanitizado = sanitizarTermoBusca(termo);
+
   try {
-    // Validar entrada
-    if (!termo || termo.trim().length === 0) {
+    if (!termoSanitizado) {
       console.warn("Termo de busca vazio");
       return [];
     }
 
-    // Verificar cache
-    const chaveCache = `${termo.toLowerCase()}_${startIndex}`;
+    const query = montarQueryBusca(termoSanitizado, escopoNormalizado);
+    const chaveCache = `${escopoNormalizado}_${termoSanitizado.toLowerCase()}_${startIndex}`;
+
     if (cacheResultados.has(chaveCache)) {
       const { data, timestamp } = cacheResultados.get(chaveCache);
       if (Date.now() - timestamp < TEMPO_CACHE) {
@@ -106,10 +142,9 @@ export const buscarLivrosApiExterna = async (termo, startIndex = 0) => {
 
     const resposta = await apiGoogleBooks.get(`/volumes`, {
       params: {
-        q: termo,
+        q: query,
         maxResults: 12,
         startIndex: startIndex,
-        langRestrict: 'pt', // Priorizar português
         printType: 'books', // Apenas livros (não revistas)
         orderBy: 'relevance', // Ordenar por relevância
         key: google_api_key
@@ -139,9 +174,9 @@ export const buscarLivrosApiExterna = async (termo, startIndex = 0) => {
   } catch (erro) {
     console.error("Erro ao buscar livros na Google Books API:", erro);
     
-    // Retornar dados em cache mesmo que expirados em caso de erro
+    const prefixoChave = `${escopoNormalizado}_${termoSanitizado.toLowerCase()}_`;
     for (const [chave, { data }] of cacheResultados.entries()) {
-      if (chave.startsWith(termo.toLowerCase())) {
+      if (chave.startsWith(prefixoChave)) {
         console.warn("Retornando dados em cache expirado devido a erro na API");
         return data;
       }

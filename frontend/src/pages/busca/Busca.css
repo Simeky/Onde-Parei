@@ -1,5 +1,18 @@
+.busca-barra-container {
+    width: 100%;
+    max-width: 600px;
+}
+
 .busca-input-container {
     max-width: 600px;
+}
+
+.busca-escopo-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .busca-coruja-fundo {
