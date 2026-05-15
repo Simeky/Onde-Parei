@@ -25,6 +25,7 @@ export default function Busca() {
   
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [temMaisResultados, setTemMaisResultados] = useState(false);
+  const [escopoBusca, setEscopoBusca] = useState('geral');
 
   useEffect(() => {
     let Montado = true; 
@@ -50,16 +51,32 @@ export default function Busca() {
     setCarregando(true);
     const startIndex = (numeroPagina - 1) * 12; 
     
-    const resultados = await buscarLivrosApiExterna(termoPesquisa, startIndex);
+    const resultados = await buscarLivrosApiExterna(
+      termoPesquisa,
+      startIndex,
+      escopoBusca
+    );
     
     setLivros(resultados);
     setTemMaisResultados(resultados.length === 12); 
     setCarregando(false);
   };
 
+  useEffect(() => {
+    if (!pesquisa.trim()) return;
+    setPaginaAtual(1);
+    void realizarBuscaNaApi(pesquisa, 1);
+    // Reexecuta a busca ao mudar o escopo (geral / autor / título), mantendo o termo atual.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só reagir a escopoBusca, não a cada tecla em pesquisa
+  }, [escopoBusca]);
+
+  const alternarEscopo = (alvo) => {
+    setEscopoBusca((atual) => (atual === alvo ? 'geral' : alvo));
+  };
+
   const lidarComPesquisa = async (e) => {
     e.preventDefault();
-    if (!pesquisa) return;
+    if (!pesquisa.trim()) return;
     
     setPaginaAtual(1); 
     await realizarBuscaNaApi(pesquisa, 1);
@@ -103,20 +120,47 @@ export default function Busca() {
       <Cabecalho />
       
       <main className="container mt-5">
-        <form onSubmit={lidarComPesquisa} className="d-flex justify-content-center mb-5">
-          <div className="input-group shadow-sm busca-input-container">
-            <input 
-              type="text" 
-              className="form-control bg-body text-body border-secondary" 
-              placeholder="Pesquisar por Título ou Autor..." 
-              value={pesquisa}
-              onChange={(e) => setPesquisa(e.target.value)}
-            />
-            <button type="submit" className="btn btn-primary px-4" disabled={carregando}>
-              {carregando ? 'Buscando...' : 'Pesquisar'}
+        <div className="busca-barra-container mx-auto mb-5">
+          <form
+            onSubmit={lidarComPesquisa}
+            className="d-flex justify-content-center mb-2"
+          >
+            <div className="input-group shadow-sm busca-input-container">
+              <input 
+                type="text" 
+                className="form-control bg-body text-body border-secondary" 
+                placeholder="Pesquisar por Título ou Autor..." 
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+              />
+              <button type="submit" className="btn btn-primary px-4" disabled={carregando}>
+                {carregando ? 'Buscando...' : 'Pesquisar'}
+              </button>
+            </div>
+          </form>
+          <div
+            className="busca-escopo-botoes"
+            role="group"
+            aria-label="Refinar busca na API"
+          >
+            <button
+              type="button"
+              className={`btn btn-sm btn-outline-secondary rounded-pill px-3${escopoBusca === 'autor' ? ' active' : ''}`}
+              onClick={() => alternarEscopo('autor')}
+              aria-pressed={escopoBusca === 'autor'}
+            >
+              Autor
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm btn-outline-secondary rounded-pill px-3${escopoBusca === 'titulo' ? ' active' : ''}`}
+              onClick={() => alternarEscopo('titulo')}
+              aria-pressed={escopoBusca === 'titulo'}
+            >
+              Título
             </button>
           </div>
-        </form>
+        </div>
 
         <h3 className="mb-4 text-secondary border-bottom border-secondary pb-2">Resultados da Pesquisa</h3>
 
