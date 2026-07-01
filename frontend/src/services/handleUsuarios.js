@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/usuarios`
+  baseURL: `${import.meta.env.VITE_AUTH_API_URL}/usuarios`
 });
 
 export const buscarUsuarioPorId = async (id) => {
