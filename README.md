@@ -12,7 +12,7 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
 ```
 📦 Onde-Parei
  ┣ 📂 backend
- ┃ ┣ 📂 config         # Configuração de conexão com Banco de Dados MySQL na AWS
+ ┃ ┣ 📂 config         # Conexão com o Firestore (Firebase Admin SDK)
  ┃ ┣ 📂 routes         # Endpoints da API (livros.routes.js, usuarios.routes.js)
  ┃ ┗ 📜 server.js      # Ponto de entrada e configuração do servidor Express
  ┃
@@ -29,22 +29,38 @@ O projeto adota uma arquitetura **Cliente-Servidor (Client-Server)** totalmente 
 ## 3. Principais Decisões Técnicas
 * **Bootstrap 5 para Estilização:** Escolhido pela facilidade na criação de interfaces responsivas e, principalmente, por fornecer suporte nativo a transições de *Dark Mode* e *Light Mode* através do atributo `data-bs-theme`, reduzindo a necessidade de CSS complexo.
 * **Login Social (Google OAuth):** Implementado para melhorar a experiência do usuário (UX), permitindo um acesso rápido sem a necessidade de criar e lembrar de uma nova senha.
-* **Banco de Dados Relacional (MySQL via AWS):** A persistência dos dados foi migrada para um banco de dados MySQL, hospedado na nuvem (AWS). A conexão e manipulação dos dados ocorrem através da biblioteca `mysql2`, utilizando pool de conexões para escalabilidade, desempenho e maior segurança.
+* **Banco de Dados (Firestore):** A persistência fica no **Cloud Firestore** (Firebase), acessado apenas pelo backend através do `firebase-admin`. O banco anteriormente era MySQL na AWS; com o fim do plano gratuito, foi migrado para o Firestore mantendo a mesma API REST. As regras do Firestore (`firestore.rules`) bloqueiam qualquer acesso direto do navegador.
+* **Login com Google verificado no servidor:** O frontend envia o token do Google ao backend, que confere a assinatura com `google-auth-library` antes de confiar no e-mail.
+
+### Modelo de dados no Firestore
+| Coleção | ID do documento | Campos |
+|---|---|---|
+| `usuarios` | automático | `email`, `senha` (hash bcrypt), `provider` (`local`/`google`), `criadoEm` |
+| `livros` | ID do Google Books | `titulo`, `autor`, `capaUrl`, `paginasTotais`, `categoria`, `ano` |
+| `progresso_leitura` | `{usuarioId}_{livroId}` | `usuarioId`, `livroId`, `paginaAtual`, `anotacao`, `status`, `ultimaAlteracao` |
+
+O status da leitura é recalculado pelo backend sempre que a página atual muda: página 0 → `para ler`, página igual ao total → `lido`, entre os dois → `lendo`.
 * **Componentização Modular:** O frontend foi estruturado separando Modais, Cartões (Cards) e o Cabeçalho (Header) em componentes independentes, facilitando a manutenção e a reutilização do código.
 
 ## 4. Instalação de Dependências e Execução
 O projeto exige o **Node.js** instalado na máquina. Abra dois terminais diferentes para rodar as duas partes do projeto:
 
+### 🔥 Configurando o Firebase (uma vez)
+1. No [Firebase Console](https://console.firebase.google.com/), crie o **Firestore Database** (modo produção) e publique na aba *Rules* o conteúdo de `firestore.rules`.
+2. Em *Configurações do projeto > Contas de serviço*, clique em **Gerar nova chave privada** e salve o arquivo como `backend/serviceAccountKey.json`. **Nunca envie esse arquivo para o git** (ele já está no `.gitignore`).
+
 ### ⚙️ Executando o Backend (Porta 5000)
 1. Navegue até a pasta do servidor: `cd backend`
-2. Instale as dependências: `npm install`
-3. Inicie o servidor: `npm start`
+2. Copie `.env.example` para `.env.local` e preencha.
+3. Instale as dependências: `npm install`
+4. Inicie o servidor: `npm start`
 * *O backend rodará em `http://localhost:5000`*
 
 ### 🎨 Executando o Frontend (Porta 5173)
 1. Navegue até a pasta da interface: `cd frontend`
-2. Instale as dependências: `npm install`
-3. Inicie a aplicação: `npm start`
+2. Copie `.env.example` para `.env.local` e preencha (a chave do Google Books é obrigatória para a busca).
+3. Instale as dependências: `npm install`
+4. Inicie a aplicação: `npm start`
 * *O frontend abrirá em `http://localhost:5173`*
 
 ## 5. Rotas do Frontend (React Router DOM)
@@ -61,7 +77,7 @@ As rotas seguem o padrão REST para comunicação HTTP.
 **Usuários (`/usuarios`):**
 * `POST /cadastrar`: Recebe os dados, criptografa a senha e registra um novo usuário local.
 * `POST /login`: Valida as credenciais locais e retorna o ID de acesso.
-* `POST /login_google`: Verifica se o e-mail do Google já existe; se sim, faz login. Se não, cadastra a nova conta atrelada ao Google.
+* `POST /login_google`: Recebe `{ credential }` (token do Google), valida o token e usa o e-mail dele: se a conta existe, faz login; se não, cadastra a nova conta atrelada ao Google.
 * `GET /:id`: Busca e retorna os dados de perfil (nome, email) para renderizar no cabeçalho.
 * `PATCH /atualizar_senha/:id`: Atualiza a senha do usuário de forma segura.
 * `DELETE /deletar_conta/:id`: Remove o usuário e limpa sua respectiva biblioteca de livros.

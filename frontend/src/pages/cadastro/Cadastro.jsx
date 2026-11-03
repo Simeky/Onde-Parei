@@ -2,7 +2,6 @@ import './Cadastro.css';
 
 import { useState } from 'react';
 
-import { jwtDecode } from 'jwt-decode';
 import {
   FaEye,
   FaEyeSlash,
@@ -59,10 +58,9 @@ export default function Cadastro() {
 
   const lidarComLoginGoogle = async (credencialResponse) => {
     try {
-      const dadosDecodificados = jwtDecode(credencialResponse.credential);
-      
-      const resposta = await loginComGoogle({ 
-        email: dadosDecodificados.email
+      // O backend confere o token com o Google e extrai o e-mail
+      const resposta = await loginComGoogle({
+        credential: credencialResponse.credential
       });
       
       localStorage.setItem('usuarioId', resposta.usuario.id);
