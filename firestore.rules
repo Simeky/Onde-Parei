@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Só o backend (firebase-admin) acessa o banco; ele ignora estas regras.
+    // Qualquer acesso direto de navegador/app é negado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

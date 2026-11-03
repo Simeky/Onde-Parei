@@ -23,3 +23,10 @@ dist-ssr
 *.sw?
 */.env*
 */node_modules
+
+# Chave do Firebase Admin (acesso total ao banco) - nunca commitar
+serviceAccountKey.json
+*/serviceAccountKey.json
+
+# Exemplos de configuracao podem ir para o git
+!*/.env.example

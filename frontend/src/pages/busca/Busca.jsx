@@ -111,7 +111,7 @@ export default function Busca() {
   };
 
   const concluirRemocao = (idRemovido) => {
-    setMinhaBiblioteca(minhaBiblioteca.filter(l => l.id !== idRemovido));
+    setMinhaBiblioteca(minhaBiblioteca.filter(l => l.progressoId !== idRemovido));
     setLivroParaRemover(null);
   };
 
