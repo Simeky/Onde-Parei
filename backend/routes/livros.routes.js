@@ -7,15 +7,24 @@ const db = require('../config/firebase.js');
 const livrosCol = db.collection('livros');
 const progressoCol = db.collection('progresso_leitura');
 
+// Status sempre no formato que o MySQL devolvia: 'Para ler' | 'Lendo' | 'Lido'.
+function normalizarStatus(status) {
+  switch (String(status || '').trim().toLowerCase()) {
+    case 'lendo': return 'Lendo';
+    case 'lido': return 'Lido';
+    default: return 'Para ler';
+  }
+}
+
 // Mesma regra do antigo trigger trg_atualiza_status_leitura do MySQL.
 function calcularStatus(paginaAtual, paginasTotais) {
   if (paginaAtual <= 0) {
-    return { status: 'para ler', paginaAtual: 0 };
+    return { status: 'Para ler', paginaAtual: 0 };
   }
   if (paginasTotais > 0 && paginaAtual >= paginasTotais) {
-    return { status: 'lido', paginaAtual: paginasTotais };
+    return { status: 'Lido', paginaAtual: paginasTotais };
   }
-  return { status: 'lendo', paginaAtual };
+  return { status: 'Lendo', paginaAtual };
 }
 
 // Ano vem como "2020", 2020 ou "N/A"; guarda número ou null.
@@ -41,7 +50,7 @@ function montarLivro(progressoDoc, livroDoc) {
     categoria: livro.categoria,
     paginaAtual: progresso.paginaAtual,
     anotacao: progresso.anotacao,
-    status: progresso.status
+    status: normalizarStatus(progresso.status)
   };
 }
 
@@ -78,7 +87,7 @@ router.post('/cadastrar_livro', async (req, res) => {
       livroId,
       paginaAtual: paginaAtual || 0,
       anotacao: anotacao || '',
-      status: status || 'para ler',
+      status: normalizarStatus(status),
       ultimaAlteracao: FieldValue.serverTimestamp()
     });
 
@@ -95,7 +104,7 @@ router.post('/cadastrar_livro', async (req, res) => {
         paginas: paginas || 0,
         ano: normalizarAno(ano),
         categoria: categoria || null,
-        status: status || 'para ler',
+        status: normalizarStatus(status),
         paginaAtual: paginaAtual || 0,
         anotacao: anotacao || ''
       }
@@ -138,7 +147,7 @@ router.patch('/atualizar_livro/:id', async (req, res) => {
     const progresso = progressoDoc.data();
     const livroDoc = await livrosCol.doc(progresso.livroId).get();
 
-    let novoStatus = status !== undefined ? status : progresso.status;
+    let novoStatus = normalizarStatus(status !== undefined ? status : progresso.status);
     let novaPagina = paginaAtual !== undefined ? Number(paginaAtual) : progresso.paginaAtual;
 
     // Como o trigger: só recalcula o status quando a página muda

@@ -71,7 +71,7 @@ export default function MeusLivros() {
 
   const livrosFiltrados = livros.filter(livro => {
     if (filtro === 'Todos') return true;
-    return livro.status === filtro;
+    return (livro.status || 'para ler').toLowerCase() === filtro.toLowerCase();
   });
 
   const totalPaginas = Math.ceil(livrosFiltrados.length / ITENS_POR_PAGINA);
@@ -117,7 +117,7 @@ export default function MeusLivros() {
           <>
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
               {livrosPaginados.map((livro) => (
-                <div className="col" key={livro.id}>
+                <div className="col" key={livro.progressoId}>
                   <CartaoMeusLivros 
                     livro={livro} 
                     aoClicar={setLivroSendoEditado} 
@@ -161,7 +161,7 @@ export default function MeusLivros() {
 
       {livroSendoEditado && (
         <ModalEdicaoLivro 
-          key={livroSendoEditado.id} 
+          key={livroSendoEditado.progressoId}
           livro={livroSendoEditado}
           aoConcluirEdicao={concluirEdicao}
           aoRemover={prepararRemocao}
